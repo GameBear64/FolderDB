@@ -1,0 +1,18 @@
+{
+  "title": "Huge success!",
+  "body": "this post is about my huge success",
+  "author": {
+    "name": "Gamriel",
+    "nickname": "Gam"
+  },
+  "links": [
+    {
+      "name": "google",
+      "url": "google.com"
+    },
+    {
+      "name": "discord",
+      "url": "discord.gg"
+    }
+  ]
+}

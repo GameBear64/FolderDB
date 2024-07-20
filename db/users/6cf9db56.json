@@ -1,0 +1,16 @@
+{
+  "name": "Gamriel",
+  "email": "vlpetrov02@gmail.com",
+  "password": "$2a$10$f2L3diPJVmyq3dozd0wxfekhwMZ4G7NDouGlxhYr4RN4w4BcwHKTe",
+  "favorites": [
+    "1"
+  ],
+  "history": {
+    "1713889571": [
+      {
+        "id": 1,
+        "q": 1
+      }
+    ]
+  }
+}
