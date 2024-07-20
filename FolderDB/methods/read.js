@@ -17,16 +17,17 @@ async function dirNavigator(value, directory = this.dbPath) {
 }
 
 async function getFile({ file, remainingPath }) {
-  let data = await fs.readFile(`${file}/${remainingPath[0]}.json`, 'UTF-8');
+  this.targetFile = `${file}/${remainingPath[0]}.json`;
+
+  let data = await fs.readFile(this.targetFile, 'UTF-8');
   data = JSON.parse(data);
-  this.fileMode = true;
+
   return { file, data, remainingPath: remainingPath.slice(1) };
 }
 
 async function fileNavigator({ remainingPath, data }) {
   assert(Array.isArray(remainingPath), 'fileNav path not array');
 
-  // console.log('ee', this);
   if (data.hasOwnProperty(remainingPath[0])) {
     return await this.fileNavigator({ remainingPath: remainingPath.slice(1), data: data[remainingPath[0]] });
   }
