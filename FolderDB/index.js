@@ -1,10 +1,10 @@
-import assert from 'node:assert';
-
-import * as methods from './methods/read';
+import methods from './methods/all';
 
 import TaskQueue from './utils/queue';
 
 // https://github.com/typicode/steno
+
+// TODO: needs to be singleton
 
 class FolderDB {
   constructor(options) {
@@ -14,44 +14,16 @@ class FolderDB {
     this.queue = new TaskQueue();
     this.targetFile = '';
 
-    this.bindMethods(this, Object.values(methods));
+    this.__bindMethods(this, Object.values(methods));
   }
 
-  bindMethods(instance, methods) {
+  // _ means private
+  // __ means very private
+  __bindMethods(instance, methods) {
     methods.forEach(method => {
+      // move queue here?
       instance[method.name] = method.bind(instance);
     });
-  }
-
-  async get(value) {
-    return this.queue.add(() => this._get(value));
-  }
-
-  async _get(value) {
-    assert(typeof value === 'string', 'value must be string');
-
-    const result = await this.dirNavigator(value ? value.split('.') : [])
-      .then(this.getFile)
-      .then(this.fileNavigator.bind(this))
-      .then(false, x => x);
-    // NOTE: This was the only way to have early returns
-
-    return result.data;
-    // return this;
-  }
-
-  async set(key, value) {
-    return this.queue.add(() => this._set(key, value));
-  }
-
-  async _set(key, value) {
-    // check if value is undefined, if yes, key is value
-    //
-    // check if in file mode
-    // if in file mode, do as stormDB
-    // if in directory mode, create files and folders
-    //
-    // handle undefined paths
   }
 }
 

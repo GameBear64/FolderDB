@@ -1,3 +1,4 @@
+// are asserts dumb? can we use ifs?
 import assert from 'node:assert';
 import * as fs from 'fs/promises';
 
@@ -35,4 +36,25 @@ async function fileNavigator({ remainingPath, data }) {
   return { data, remainingPath };
 }
 
-export { dirNavigator, getFile, fileNavigator };
+async function _get(value) {
+  assert(typeof value === 'string', 'value must be string');
+
+  const result = await this.dirNavigator(value ? value.split('.') : [])
+    .then(this.getFile)
+    .then(this.fileNavigator.bind(this))
+    .then(false, x => x);
+  // NOTE: This was the only way to have early returns
+
+  return result.data;
+  // return this;
+}
+
+async function get(value) {
+  return this.queue.add(() => this._get(value));
+}
+
+async function value(value) {
+  // TODO: find a way to avoid using .value(), find a way to get information out of .get() just like in mongodb
+}
+
+export { dirNavigator, getFile, fileNavigator, _get, get };
