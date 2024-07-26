@@ -11,10 +11,6 @@ async function setValue(value) {
 }
 
 async function set(key, value) {
-  return this.queue.add(() => this._set(key, value));
-}
-
-async function _set(key, value) {
   // check if value is undefined, if yes, key is value
   //
   // check if in file mode
@@ -28,4 +24,4 @@ async function rename(key, value) {}
 
 async function remove(key, value) {}
 
-export { createFile, _set, set };
+export { createFile, set };

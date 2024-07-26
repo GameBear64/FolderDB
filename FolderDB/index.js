@@ -17,12 +17,12 @@ class FolderDB {
     this.__bindMethods(this, Object.values(methods));
   }
 
-  // _ means private
-  // __ means very private
   __bindMethods(instance, methods) {
     methods.forEach(method => {
-      // move queue here?
-      instance[method.name] = method.bind(instance);
+      // NOTE: this way we can skip the queue for internal use
+      instance['_' + method.name] = method.bind(instance);
+
+      instance[method.name] = (...args) => this.queue.add(() => method.apply(instance, args));
     });
   }
 }

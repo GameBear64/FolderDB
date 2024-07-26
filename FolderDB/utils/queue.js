@@ -6,7 +6,7 @@ export default class TaskQueue {
 
   add(task) {
     this.queue.push(task);
-    this.startNext();
+    return this.startNext();
   }
 
   async startNext() {
@@ -16,7 +16,7 @@ export default class TaskQueue {
     const currentTask = this.queue.shift();
 
     try {
-      await currentTask();
+      return await currentTask();
     } catch (error) {
       console.error('Task failed:', error);
     } finally {

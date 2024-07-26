@@ -11,7 +11,7 @@ async function dirNavigator(value, directory = this.dbPath) {
   if (value.length == 0) return Promise.reject({ data: dir });
 
   if (dir.includes(value[0])) {
-    return await this.dirNavigator(value.slice(1), `${directory}/${value[0]}`);
+    return await this._dirNavigator(value.slice(1), `${directory}/${value[0]}`);
   }
 
   return { file: directory, remainingPath: value };
@@ -30,18 +30,18 @@ async function fileNavigator({ remainingPath, data }) {
   assert(Array.isArray(remainingPath), 'fileNav path not array');
 
   if (data.hasOwnProperty(remainingPath[0])) {
-    return await this.fileNavigator({ remainingPath: remainingPath.slice(1), data: data[remainingPath[0]] });
+    return await this._fileNavigator({ remainingPath: remainingPath.slice(1), data: data[remainingPath[0]] });
   }
 
   return { data, remainingPath };
 }
 
-async function _get(value) {
+async function get(value) {
   assert(typeof value === 'string', 'value must be string');
 
-  const result = await this.dirNavigator(value ? value.split('.') : [])
-    .then(this.getFile)
-    .then(this.fileNavigator.bind(this))
+  const result = await this._dirNavigator(value ? value.split('.') : [])
+    .then(this._getFile)
+    .then(this._fileNavigator.bind(this))
     .then(false, x => x);
   // NOTE: This was the only way to have early returns
 
@@ -49,12 +49,8 @@ async function _get(value) {
   // return this;
 }
 
-async function get(value) {
-  return this.queue.add(() => this._get(value));
-}
-
 async function value(value) {
   // TODO: find a way to avoid using .value(), find a way to get information out of .get() just like in mongodb
 }
 
-export { dirNavigator, getFile, fileNavigator, _get, get };
+export { dirNavigator, getFile, fileNavigator, get };
