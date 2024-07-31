@@ -1,11 +1,15 @@
-import FolderDB from "./FolderDB/index.js";
+import FolderDB from './FolderDB/index.js';
 
-const db = new FolderDB();
-console.log("==============================================");
+const db = new FolderDB({ dbPath: './db' });
 
-const result = await db.get("");
-console.log("this is ", result);
-// db.get("users");
-// db.get('users.posts.1234.author');
+console.log('==============================================');
 
-console.log("==============================================");
+const result = await db.get('users');
+console.log('this is ', result.data);
+
+// const result2 = await db.get('users.posts');
+// console.log('this is ', result2);
+
+// console.log(result.queue === result2.queue);
+
+console.log('==============================================');

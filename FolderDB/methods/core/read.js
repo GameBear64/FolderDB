@@ -2,6 +2,8 @@
 import assert from 'node:assert';
 import * as fs from 'fs/promises';
 
+import { ValueType } from '../../utils/enums';
+
 async function dirNavigator(value, directory = this.dbPath) {
   // trim dots
   assert(Array.isArray(value), 'dirNav path not array');
@@ -23,34 +25,72 @@ async function getFile({ file, remainingPath }) {
   let data = await fs.readFile(this.targetFile, 'UTF-8');
   data = JSON.parse(data);
 
-  return { file, data, remainingPath: remainingPath.slice(1) };
+  this.pointers = remainingPath.slice(1);
+
+  return { file, data };
 }
 
-async function fileNavigator({ remainingPath, data }) {
-  assert(Array.isArray(remainingPath), 'fileNav path not array');
+async function fileNavigator({ data }) {
+  assert(Array.isArray(this.pointers), 'fileNav path not array');
 
-  if (data.hasOwnProperty(remainingPath[0])) {
-    return await this._fileNavigator({ remainingPath: remainingPath.slice(1), data: data[remainingPath[0]] });
+  if (data.hasOwnProperty(this.pointers[0])) {
+    return await this._fileNavigator({ remainingPath: this.pointers.slice(1), data: data[this.pointers[0]] });
   }
 
-  return { data, remainingPath };
+  return { data };
 }
 
+// async function dirNavigator(directory = this.dbPath) {
+//   const dir = await fs.readdir(directory);
+
+//   if (this.pointers.length == 0) return { data: dir };
+
+//   console.log(dir, this.pointers);
+
+//   if (dir.includes(this.pointers[0])) {
+//     this.pointers = this.pointers.slice(1);
+//     return await this._dirNavigator(`${directory}/${this.pointers[0]}`);
+//   }
+
+//   return { data: dir, doNext: true };
+// }
+
 async function get(value) {
+  // TODO: trim dots
   assert(typeof value === 'string', 'value must be string');
 
+  this.pointers = value ? value.split('.') : [];
+
+  this.targetFile = null;
+  this.filePointers = [];
+  this.data = null;
+  this.valueType = ValueType.DIRECTORY;
+
+  // const clone = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
+
+  // const result = await clone._dirNavigator();
+
+  // console.log(result);
+
+  // REVIEW: have conditions based on the state
+  // get can be recursive for each "key" user.posts.date
+
+  // if this.targetFile is empty, do dirNavigation until a file is found
+  // if file is found, save and do file navigation
+  // no need for a "isFileMode" boolean, we will just look at the this.targetFile
+
   const result = await this._dirNavigator(value ? value.split('.') : [])
-    .then(this._getFile)
+    .then(this._getFile.bind(this))
     .then(this._fileNavigator.bind(this))
     .then(false, x => x);
   // NOTE: This was the only way to have early returns
 
-  return result.data;
-  // return this;
-}
+  // clone.data = result.data;
+  // return clone
 
-async function value(value) {
-  // TODO: find a way to avoid using .value(), find a way to get information out of .get() just like in mongodb
+  this.data = result.data;
+
+  return this;
 }
 
 export { dirNavigator, getFile, fileNavigator, get };
