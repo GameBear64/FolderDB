@@ -1,94 +1,82 @@
-// are asserts dumb? can we use ifs?
-import assert from 'node:assert';
-import * as fs from 'fs/promises';
+import * as fs from 'fs';
+import path from 'path';
 
 import { ValueType } from '../../utils/enums';
 
-async function dirNavigator(value, directory = this.dbPath) {
-  // trim dots
-  assert(Array.isArray(value), 'dirNav path not array');
-
-  const dir = await fs.readdir(directory);
-
-  if (value.length == 0) return Promise.reject({ data: dir });
-
-  if (dir.includes(value[0])) {
-    return await this._dirNavigator(value.slice(1), `${directory}/${value[0]}`);
+function dirNavigator(directory = this.dbPath) {
+  let dir;
+  try {
+    dir = fs.readdirSync(directory);
+  } catch (error) {
+    throw new Error(`Error reading directory ${directory}`, error);
   }
 
-  return { file: directory, remainingPath: value };
-}
-
-async function getFile({ file, remainingPath }) {
-  this.targetFile = `${file}/${remainingPath[0]}.json`;
-
-  let data = await fs.readFile(this.targetFile, 'UTF-8');
-  data = JSON.parse(data);
-
-  this.pointers = remainingPath.slice(1);
-
-  return { file, data };
-}
-
-async function fileNavigator({ data }) {
-  assert(Array.isArray(this.pointers), 'fileNav path not array');
-
-  if (data.hasOwnProperty(this.pointers[0])) {
-    return await this._fileNavigator({ remainingPath: this.pointers.slice(1), data: data[this.pointers[0]] });
+  if (this.pointers.length === 0) {
+    this.data = dir;
+    return this;
   }
 
-  return { data };
+  if (dir.includes(this.pointers[0])) {
+    this.targetFile = path.join(this.targetFile, this.pointers[0]);
+
+    return this._dirNavigator(path.join(directory, this.pointers.shift()));
+  }
+
+  return { doNext: true };
 }
 
-// async function dirNavigator(directory = this.dbPath) {
-//   const dir = await fs.readdir(directory);
+function getFile() {
+  this.targetFile = path.join(this.targetFile, `${this.pointers[0]}.json`);
 
-//   if (this.pointers.length == 0) return { data: dir };
+  try {
+    let data = fs.readFileSync(this.targetFile, 'UTF-8');
+    this.data = JSON.parse(data);
 
-//   console.log(dir, this.pointers);
+    this.valueType = ValueType.FILE;
+  } catch (error) {
+    throw new Error(`Error reading file ${this.targetFile}`, error);
+  }
 
-//   if (dir.includes(this.pointers[0])) {
-//     this.pointers = this.pointers.slice(1);
-//     return await this._dirNavigator(`${directory}/${this.pointers[0]}`);
-//   }
+  this.pointers.shift();
+}
 
-//   return { data: dir, doNext: true };
-// }
+function fileNavigator() {
+  if (!Array.isArray(this.pointers)) {
+    throw new Error('fileNav path is not an array');
+  }
 
-async function get(value) {
-  // TODO: trim dots
-  assert(typeof value === 'string', 'value must be string');
+  // we stop removing pointers to be able to navigate back here
 
-  this.pointers = value ? value.split('.') : [];
+  for (let i = 0; i < this.pointers.length; i++) {
+    this.valueType = ValueType.VALUE;
+    const key = this.pointers[i];
 
-  this.targetFile = null;
-  this.filePointers = [];
+    if (this.data.hasOwnProperty(key)) {
+      this.data = this.data[key];
+    } else {
+      throw new Error(`Path not found: ${key}`);
+    }
+  }
+}
+
+function get(value) {
+  if (typeof value !== 'string') {
+    throw new Error('value must be string');
+  }
+
+  this.pointers = [];
+  this.targetFile = this.dbPath;
   this.data = null;
   this.valueType = ValueType.DIRECTORY;
 
-  // const clone = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
+  this.pointers = value.split('.').filter(p => p !== '');
 
-  // const result = await clone._dirNavigator();
+  const { doNext } = this._dirNavigator();
 
-  // console.log(result);
-
-  // REVIEW: have conditions based on the state
-  // get can be recursive for each "key" user.posts.date
-
-  // if this.targetFile is empty, do dirNavigation until a file is found
-  // if file is found, save and do file navigation
-  // no need for a "isFileMode" boolean, we will just look at the this.targetFile
-
-  const result = await this._dirNavigator(value ? value.split('.') : [])
-    .then(this._getFile.bind(this))
-    .then(this._fileNavigator.bind(this))
-    .then(false, x => x);
-  // NOTE: This was the only way to have early returns
-
-  // clone.data = result.data;
-  // return clone
-
-  this.data = result.data;
+  if (doNext) {
+    this._getFile();
+    this._fileNavigator();
+  }
 
   return this;
 }

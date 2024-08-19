@@ -17,8 +17,6 @@ export default class TaskQueue {
 
     try {
       return await currentTask();
-    } catch (error) {
-      console.error('Task failed:', error);
     } finally {
       this.processing = false;
       this.startNext();
