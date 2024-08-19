@@ -64,21 +64,22 @@ function get(value) {
     throw new Error('value must be string');
   }
 
-  this.pointers = [];
-  this.targetFile = this.dbPath;
-  this.data = null;
-  this.valueType = ValueType.DIRECTORY;
+  const clone = this._clone();
 
-  this.pointers = value.split('.').filter(p => p !== '');
+  clone.pointers = value.split('.').filter(p => p !== '');
 
-  const { doNext } = this._dirNavigator();
+  if (clone.valueType == ValueType.DIRECTORY) {
+    const { doNext } = clone._dirNavigator();
 
-  if (doNext) {
-    this._getFile();
-    this._fileNavigator();
+    if (doNext) {
+      clone._getFile();
+      clone._fileNavigator();
+    }
+  } else {
+    clone._fileNavigator();
   }
 
-  return this;
+  return clone;
 }
 
 export { dirNavigator, getFile, fileNavigator, get };

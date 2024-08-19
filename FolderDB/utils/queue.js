@@ -9,14 +9,14 @@ export default class TaskQueue {
     return this.startNext();
   }
 
-  async startNext() {
+  startNext() {
     if (this.processing || this.queue.length === 0) return;
 
     this.processing = true;
     const currentTask = this.queue.shift();
 
     try {
-      return await currentTask();
+      return currentTask();
     } finally {
       this.processing = false;
       this.startNext();
