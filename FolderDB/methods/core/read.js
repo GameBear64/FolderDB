@@ -41,10 +41,6 @@ function getFile() {
 }
 
 function fileNavigator() {
-  if (!Array.isArray(this.pointers)) {
-    throw new Error('fileNav path is not an array');
-  }
-
   // we stop removing pointers to be able to navigate back here
 
   for (let i = 0; i < this.pointers.length; i++) {
