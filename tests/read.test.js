@@ -62,6 +62,12 @@ describe('[ERROR HANDLING]', () => {
     }).toThrow('Error reading directory ./nothing');
   });
 
+  test('Wrong parameters', async () => {
+    expect(() => {
+      db.get();
+    }).toThrow('Value must be string');
+  });
+
   test('Wrong directory', async () => {
     expect(() => {
       db.get('nothing');

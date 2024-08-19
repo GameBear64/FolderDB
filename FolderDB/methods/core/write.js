@@ -1,61 +1,101 @@
 import assert from 'node:assert';
-import * as fs from 'fs/promises';
+import { ValueType } from '../../utils/enums';
 
-async function createFile(value) {
-  // trim dots
-  assert(Array.isArray(value), 'dirNav path not array');
+import * as fs from 'fs';
+
+async function createFolder(name) {
+  fs.mkdirSync(name, { recursive: true });
+
+  return this;
 }
 
-async function setValue(value) {
-  // trim dots
+async function createFile(name) {
+  const pointers = name.split('/');
+
+  const fileName = pointers.splice(-1)[0];
+
+  this._createFolder(pointers.join('/'));
+
+  fs.writeFileSync([...pointers, fileName].join('/') + '.json');
+
+  return this;
 }
 
-async function set(key, value) {
-  // check if value is undefined, if yes, key is value
-  //
-  // check if in file mode
-  // if in file mode, do as stormDB
-  // if in directory mode, create files and folders
-  //
-  // handle undefined paths
-  //
-  // if (value === undefined) {
-  //   this.setValue(key);
-  // } else {
-  //   let extraPointers;
-  //   if (typeof key === 'string') extraPointers = key.split('.');
-  //   else extraPointers = [key];
-  //   this.setValue(value, extraPointers);
-  // }
-  // return this;
+function set(_key, _value) {
+  if (this.valueType == ValueType.DIRECTORY) {
+    throw new Error('Only values can be set');
+  }
+  let target = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
+
+  const value = _value || _key;
+  const extraPointers = _value === undefined ? [] : _key.includes('.') ? _key.split('.').filter(p => p != '') : [_key];
+  const pointers = [...this.pointers, ...extraPointers];
+
+  // ensure all pointers exist
+  for (let i = 0; i < pointers.length; i++) {
+    if (target[pointers.slice(0, -1)] == undefined) target[pointers.slice(0, -1)] = {};
+  }
+
+  console.log(pointers);
+
+  console.log(target[pointers]);
+
+  target[pointers] = value;
+
+  fs.writeFileSync(this.targetFile, JSON.stringify(target, null, 2));
+
+  return this;
 }
 
-// async function setValue(value, pointers = []) {
-//   let depth = 0;
+async function rename(newName) {
+  switch (this.valueType) {
+    case ValueType.DIRECTORY:
+    case ValueType.FILE:
+      const foldersDir = this.targetFile.split('/').slice(0, -1);
+      let newPath = [...foldersDir, newName].join('/');
 
-//   pointers = [...this.pointers, ...pointers];
+      if (this.valueType === ValueType.FILE) {
+        newPath += '.json';
+      }
 
-//   const func = (a, b) => {
-//     depth += 1;
+      fs.renameSync(this.targetFile, newPath);
+      break;
+    case ValueType.VALUE:
+      let target = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
+      const oldKey = this.pointers[this.pointers.length - 1];
 
-//     let finalLevel = depth === pointers.length;
-//     if (typeof a[b] === 'undefined' && !finalLevel) {
-//       a[b] = {};
-//       return a[b];
-//     }
+      if (target[oldKey] !== undefined) {
+        target[newName] = target[oldKey];
+        delete target[oldKey];
+        fs.writeFileSync(this.targetFile, JSON.stringify(target, null, 2));
+      }
+      break;
+  }
 
-//     if (finalLevel) {
-//       a[b] = value;
-//       return value;
-//     } else {
-//       return a[b];
-//     }
-//   };
-//   pointers.reduce(func, this.state);
-// }
+  return this;
+}
 
-async function rename(key, value) {}
+async function remove() {
+  switch (this.valueType) {
+    case ValueType.DIRECTORY:
+      fs.rmdirSync(this.targetFile, { recursive: true });
+      break;
+    case ValueType.FILE:
+      fs.unlinkSync(this.targetFile);
+      break;
+    case ValueType.VALUE:
+      let target = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
 
-async function remove(key, value) {}
+      const keyToRemove = this.pointers[this.pointers.length - 1];
 
-export { createFile, set };
+      if (target[keyToRemove] !== undefined) {
+        delete target[keyToRemove];
+        fs.writeFileSync(this.targetFile, JSON.stringify(target, null, 2));
+      }
+      break;
+  }
+
+  return this;
+}
+
+export { createFolder, createFile, set, rename, remove };

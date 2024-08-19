@@ -14,5 +14,7 @@
       "name": "discord",
       "url": "discord.gg"
     }
-  ]
+  ],
+  "test": "new value2",
+  "test,aa": "new value2"
 }

@@ -57,7 +57,7 @@ function fileNavigator() {
 
 function get(value) {
   if (typeof value !== 'string') {
-    throw new Error('value must be string');
+    throw new Error('Value must be string');
   }
 
   const clone = this._clone();
