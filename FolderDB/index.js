@@ -4,8 +4,15 @@ import methods from './methods/all';
 import { ValueType } from './utils/enums';
 
 class FolderDB {
+  /**
+   * @param {Object} options - Configuration options for the FolderDB instance.
+   * @param {string} options.dbPath - The path to the database directory.
+   * @param {boolean} [options.mergeInstances=false] - If true, merges this instance with any existing instance.
+   */
   constructor(options) {
-    if (FolderDB._instance) throw new Error('Only one instance allowed!');
+    if (FolderDB._instance && !options.mergeInstances) {
+      throw new Error('Only one instance allowed!');
+    }
     FolderDB._instance = this;
 
     this.dbPath = options.dbPath;

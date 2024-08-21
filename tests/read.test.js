@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import FolderDB from '../FolderDB/index.js';
 import { ValueType } from '../FolderDB/utils/enums.js';
 
-const db = new FolderDB({ dbPath: './db' });
+const db = new FolderDB({ dbPath: './db', mergeInstances: true });
 
 describe('[FOLDERS]', () => {
   test('Empty pointers', async () => {
@@ -59,7 +59,7 @@ describe('[ERROR HANDLING]', () => {
 
     expect(() => {
       errorDB.get('nothing');
-    }).toThrow('Error reading directory ./nothing');
+    }).toThrow('Invalid directory path: ./nothing');
   });
 
   test('Wrong parameters', async () => {

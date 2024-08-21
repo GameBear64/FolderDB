@@ -25,24 +25,25 @@ function set(_key, _value) {
   if (this.valueType == ValueType.DIRECTORY) {
     throw new Error('Only values can be set');
   }
-  let target = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
 
-  const value = _value || _key;
+  const value = _value !== undefined ? _value : _key;
   const extraPointers = _value === undefined ? [] : _key.includes('.') ? _key.split('.').filter(p => p != '') : [_key];
   const pointers = [...this.pointers, ...extraPointers];
 
-  // ensure all pointers exist
-  for (let i = 0; i < pointers.length; i++) {
-    if (target[pointers.slice(0, -1)] == undefined) target[pointers.slice(0, -1)] = {};
+  this.data = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
+  let current = this.data; // reference, pointer
+
+  for (let i = 0; i < pointers.length - 1; i++) {
+    const key = pointers[i];
+    if (typeof current[key] !== 'object' || current[key] === null) {
+      current[key] = {};
+    }
+    current = current[key];
   }
 
-  console.log(pointers);
+  current[pointers[pointers.length - 1]] = value;
 
-  console.log(target[pointers]);
-
-  target[pointers] = value;
-
-  fs.writeFileSync(this.targetFile, JSON.stringify(target, null, 2));
+  fs.writeFileSync(this.targetFile, JSON.stringify(this.data, null, 2));
 
   return this;
 }

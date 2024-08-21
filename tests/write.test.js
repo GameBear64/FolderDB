@@ -2,15 +2,43 @@ import { describe, expect, test } from 'bun:test';
 import * as fs from 'fs';
 
 import FolderDB from '../FolderDB/index.js';
-import { ValueType } from '../FolderDB/utils/enums.js';
 
-// only one instance allowed
-// const db = new FolderDB({ dbPath: './db' });
+const db = new FolderDB({ dbPath: './db', mergeInstances: true });
 
-describe('[hi]', () => {
-  // test('Empty pointers', async () => {
-  //   const result = db.get('');
-  //   const dir = fs.readdirSync('./db');
-  //   expect(result.data).toEqual(dir);
-  // });
+describe('[SET]', () => {
+  test('Writing with key and value', async () => {
+    db.get('users.posts.1234.test').set('nestedKey', 'new value');
+    let data = JSON.parse(fs.readFileSync('./db/users/posts/1234.json', 'UTF-8'));
+
+    expect(data.test.nestedKey).toEqual('new value');
+
+    db.get('users.posts.1234.test').set('nestedKey', 'newer value');
+    data = JSON.parse(fs.readFileSync('./db/users/posts/1234.json', 'UTF-8'));
+
+    expect(data.test.nestedKey).toEqual('newer value');
+  });
+
+  test('Writing without key', async () => {
+    db.get('users.posts.1234.test.nestedKey').set('new value 2');
+    let data = JSON.parse(fs.readFileSync('./db/users/posts/1234.json', 'UTF-8'));
+
+    expect(data.test.nestedKey).toEqual('new value 2');
+  });
+
+  test('Writing with many keys', async () => {
+    db.get('users.posts.1234').set('test2.deep.nest', 'nested new value');
+    let data = JSON.parse(fs.readFileSync('./db/users/posts/1234.json', 'UTF-8'));
+
+    expect(data.test2.deep.nest).toEqual('nested new value');
+  });
 });
+
+describe('[FILE]', () => {});
+
+describe('[FOLDER]', () => {});
+
+describe('[RENAME]', () => {});
+
+describe('[REMOVE]', () => {});
+
+describe('[ERRORS]', () => {});

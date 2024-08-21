@@ -3,13 +3,19 @@ import path from 'path';
 
 import { ValueType } from '../../utils/enums';
 
+/**
+ * Navigates through a directory structure based on the current pointers.
+ *
+ * @param {string} [directory=this.dbPath] The directory path to navigate.
+ * @returns {Object|this} Returns the current instance or an object indicating the next action.
+ * @throws {Error} Throws an error if the directory cannot be read.
+ */
 function dirNavigator(directory = this.dbPath) {
-  let dir;
-  try {
-    dir = fs.readdirSync(directory);
-  } catch (error) {
-    throw new Error(`Error reading directory ${directory}`, error);
+  if (!fs.existsSync(directory) || !fs.lstatSync(directory).isDirectory()) {
+    throw new Error(`Invalid directory path: ${directory}`);
   }
+
+  let dir = fs.readdirSync(directory);
 
   if (this.pointers.length === 0) {
     this.data = dir;
@@ -25,6 +31,12 @@ function dirNavigator(directory = this.dbPath) {
   return { doNext: true };
 }
 
+/**
+ * Reads a JSON file and parses its content.
+ *
+ * @returns {void}
+ * @throws {Error} - Throws an error if the file cannot be read or parsed.
+ */
 function getFile() {
   this.targetFile = path.join(this.targetFile, `${this.pointers[0]}.json`);
 
@@ -40,13 +52,21 @@ function getFile() {
   this.pointers.shift();
 }
 
+/**
+ * Navigates through the data structure based on the current pointers.
+ *
+ * @returns {void}
+ * @throws {Error} - Throws an error if a path in the pointers does not exist in the data.
+ */
 function fileNavigator() {
+  if (!this.pointers || !this.data) {
+    throw new Error('Pointers or data not properly initialized.');
+  }
+
+  if (this.pointers.length > 0) this.valueType = ValueType.VALUE;
   // we stop removing pointers to be able to navigate back here
 
-  for (let i = 0; i < this.pointers.length; i++) {
-    this.valueType = ValueType.VALUE;
-    const key = this.pointers[i];
-
+  for (const key of this.pointers) {
     if (this.data.hasOwnProperty(key)) {
       this.data = this.data[key];
     } else {
@@ -55,6 +75,13 @@ function fileNavigator() {
   }
 }
 
+/**
+ * Retrieves a value based on a dot-separated string path.
+ *
+ * @param {string} value - The dot-separated string path to retrieve the value.
+ * @returns {Object} - Returns a clone of the current instance with the retrieved value.
+ * @throws {Error} - Throws an error if the value is not a string.
+ */
 function get(value) {
   if (typeof value !== 'string') {
     throw new Error('Value must be string');

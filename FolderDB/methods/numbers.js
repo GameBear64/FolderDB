@@ -32,12 +32,20 @@ function sub(number) {
   return this;
 }
 
+function random(max, min = 0) {
+  if (isNaN(min) || isNaN(max)) throw new Error('You can only use random() with numbers.');
+
+  const randomized = Math.floor(Math.random() * (max - min + 1) + min);
+  this.set(randomized);
+  return this;
+}
+
 function addRandom(max, min = 0) {
   let value = Number(this.value());
   if (isNaN(max) && isNaN(min)) throw new Error('Values can only be numbers.');
   if (isNaN(value)) throw new Error('You can only add to numbers.');
 
-  let randomized = Math.floor(Math.random() * (max - min + 1) + min);
+  const randomized = Math.floor(Math.random() * (max - min + 1) + min);
   this.set(value + randomized);
   return randomized;
 }
@@ -47,10 +55,11 @@ function subRandom(max, min = 0) {
   if (isNaN(max) && isNaN(min)) throw new Error('Values can only be numbers.');
   if (isNaN(value)) throw new Error('You can only subtract to numbers.');
 
-  let randomized = Math.floor(Math.random() * (max - min + 1) + min);
+  const randomized = Math.floor(Math.random() * (max - min + 1) + min);
   this.set(value - randomized);
   return randomized;
 }
 
-// Copied from ThunderDB, will probably need a rework
-export { inc, dec, add, sub, addRandom, subRandom };
+export { inc, dec, add, sub, random, addRandom, subRandom };
+
+// NOTE: Copied from ThunderDB, will need a rework

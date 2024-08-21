@@ -15,6 +15,12 @@
       "url": "discord.gg"
     }
   ],
-  "test": "new value2",
-  "test,aa": "new value2"
+  "test": {
+    "nestedKey": "new value 2"
+  },
+  "test2": {
+    "deep": {
+      "nest": "nested new value"
+    }
+  }
 }
