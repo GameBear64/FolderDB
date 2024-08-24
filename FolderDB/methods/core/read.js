@@ -38,7 +38,10 @@ function dirNavigator(directory = this.dbPath) {
  * @throws {Error} - Throws an error if the file cannot be read or parsed.
  */
 function getFile() {
-  this.targetFile = path.join(this.targetFile, `${this.pointers[0]}.json`);
+  if (!this.targetFile.includes('.json')) {
+    this.targetFile = path.join(this.targetFile, `${this.pointers[0]}.json`);
+    this.pointers.shift();
+  }
 
   try {
     let data = fs.readFileSync(this.targetFile, 'UTF-8');
@@ -48,8 +51,6 @@ function getFile() {
   } catch (error) {
     throw new Error(`Error reading file ${this.targetFile}`, error);
   }
-
-  this.pointers.shift();
 }
 
 /**
@@ -167,4 +168,44 @@ function getTree(value) {
   }
 }
 
-export { dirNavigator, getFile, fileNavigator, get, getTree };
+/**
+ * Reverses the navigation by going back a specified number of steps up the directory or file structure.
+ *
+ * @param {number} steps - The number of steps to go back. Defaults to 1.
+ * @returns {this} - Returns the current instance for chaining.
+ * @throws {Error} - Throws an error if unable to navigate back.
+ */
+function goBack(steps = 1) {
+  if (typeof steps !== 'number' || steps < 1) {
+    throw new Error('Steps must be a positive number');
+  }
+
+  const totalDepth = this.targetFile.split('/').length - 1 + this.pointers.length;
+  if (steps >= totalDepth) {
+    throw new Error('Steps cannot be more than the available depth');
+  }
+
+  for (let i = 0; i < steps; i++) {
+    this.pointers.pop();
+
+    switch (this.valueType) {
+      case ValueType.VALUE:
+        this._getFile();
+        this._fileNavigator();
+        break;
+
+      case ValueType.FILE:
+        this.pointers = path.dirname(this.targetFile).split('/').slice(1, -1);
+        this.targetFile = this.dbPath;
+        this.valueType = ValueType.DIRECTORY;
+
+      case ValueType.DIRECTORY:
+        this.data = fs.readdirSync(`${this.targetFile}/${this.pointers.join('/')}`);
+        break;
+    }
+  }
+
+  return this;
+}
+
+export { dirNavigator, getFile, fileNavigator, get, getTree, goBack };
