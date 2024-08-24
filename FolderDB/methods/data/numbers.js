@@ -1,5 +1,5 @@
 function inc() {
-  let value = Number(this.data);
+  const value = Number(this.data);
   if (isNaN(value)) throw new Error('You can only increment numbers.');
 
   this._set(value + 1);
@@ -7,7 +7,7 @@ function inc() {
 }
 
 function dec() {
-  let value = Number(this.data);
+  const value = Number(this.data);
   if (isNaN(value)) throw new Error('You can only decrement numbers.');
 
   this._set(value - 1);
@@ -15,7 +15,7 @@ function dec() {
 }
 
 function add(number) {
-  let value = Number(this.value());
+  const value = Number(this.value());
   if (isNaN(number)) throw new Error('Values can only be numbers.');
   if (isNaN(value)) throw new Error('You can only add to numbers.');
 
@@ -24,7 +24,7 @@ function add(number) {
 }
 
 function sub(number) {
-  let value = Number(this.value());
+  const value = Number(this.value());
   if (isNaN(number)) throw new Error('Values can only be numbers.');
   if (isNaN(value)) throw new Error('You can only subtract to numbers.');
 
@@ -41,7 +41,7 @@ function random(max, min = 0) {
 }
 
 function addRandom(max, min = 0) {
-  let value = Number(this.value());
+  const value = Number(this.value());
   if (isNaN(max) && isNaN(min)) throw new Error('Values can only be numbers.');
   if (isNaN(value)) throw new Error('You can only add to numbers.');
 
@@ -51,7 +51,7 @@ function addRandom(max, min = 0) {
 }
 
 function subRandom(max, min = 0) {
-  let value = Number(this.value());
+  const value = Number(this.value());
   if (isNaN(max) && isNaN(min)) throw new Error('Values can only be numbers.');
   if (isNaN(value)) throw new Error('You can only subtract to numbers.');
 
