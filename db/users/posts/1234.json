@@ -16,11 +16,12 @@
     }
   ],
   "test": {
-    "nestedKey": "new value 2"
+    "nestedKey": "some other value"
   },
   "test2": {
     "deep": {
       "nest": "nested new value"
     }
-  }
+  },
+  "likes": 51
 }

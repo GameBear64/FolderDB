@@ -52,6 +52,10 @@ describe('[VALUES]', () => {
   });
 });
 
+describe('[TREE]', () => {
+  // TODO
+});
+
 describe('[ERROR HANDLING]', () => {
   test('Wrong db path', async () => {
     const errorDB = db._clone();

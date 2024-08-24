@@ -45,6 +45,9 @@ function set(_key, _value) {
 
   fs.writeFileSync(this.targetFile, JSON.stringify(this.data, null, 2));
 
+  // Get updated value
+  this._fileNavigator();
+
   return this;
 }
 

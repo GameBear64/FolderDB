@@ -11,11 +11,6 @@ describe('[SET]', () => {
     let data = JSON.parse(fs.readFileSync('./db/users/posts/1234.json', 'UTF-8'));
 
     expect(data.test.nestedKey).toEqual('new value');
-
-    db.get('users.posts.1234.test').set('nestedKey', 'newer value');
-    data = JSON.parse(fs.readFileSync('./db/users/posts/1234.json', 'UTF-8'));
-
-    expect(data.test.nestedKey).toEqual('newer value');
   });
 
   test('Writing without key', async () => {
@@ -30,6 +25,18 @@ describe('[SET]', () => {
     let data = JSON.parse(fs.readFileSync('./db/users/posts/1234.json', 'UTF-8'));
 
     expect(data.test2.deep.nest).toEqual('nested new value');
+  });
+
+  test('Overriding and instances', async () => {
+    let instance = db.get('users.posts.1234.test').set('nestedKey', 'some value');
+    let data = JSON.parse(fs.readFileSync('./db/users/posts/1234.json', 'UTF-8'));
+
+    expect(data.test.nestedKey).toEqual('some value');
+
+    instance.set('nestedKey', 'some other value');
+    data = JSON.parse(fs.readFileSync('./db/users/posts/1234.json', 'UTF-8'));
+
+    expect(data.test.nestedKey).toEqual('some other value');
   });
 });
 

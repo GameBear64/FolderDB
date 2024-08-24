@@ -1,17 +1,17 @@
 function inc() {
-  let value = Number(this.value());
+  let value = Number(this.data);
   if (isNaN(value)) throw new Error('You can only increment numbers.');
 
-  this.set(value + 1);
-  return this;
+  this._set(value + 1);
+  return this.data;
 }
 
 function dec() {
-  let value = Number(this.value());
+  let value = Number(this.data);
   if (isNaN(value)) throw new Error('You can only decrement numbers.');
 
-  this.set(value - 1);
-  return this;
+  this._set(value - 1);
+  return this.data;
 }
 
 function add(number) {
@@ -60,6 +60,7 @@ function subRandom(max, min = 0) {
   return randomized;
 }
 
-export { inc, dec, add, sub, random, addRandom, subRandom };
+export { inc, dec };
+// export { inc, dec, add, sub, random, addRandom, subRandom };
 
 // NOTE: Copied from ThunderDB, will need a rework

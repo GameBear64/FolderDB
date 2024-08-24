@@ -105,4 +105,66 @@ function get(value) {
   return clone;
 }
 
-export { dirNavigator, getFile, fileNavigator, get };
+function traverseDir(currentDir) {
+  const dirContent = fs.readdirSync(currentDir);
+  const result = {};
+
+  dirContent.forEach(item => {
+    const fullPath = path.join(currentDir, item);
+
+    if (fs.lstatSync(fullPath).isDirectory()) {
+      result[item] = traverseDir(fullPath);
+    } else if (item.endsWith('.json')) {
+      try {
+        const data = fs.readFileSync(fullPath, 'utf-8');
+        result[item.slice(0, -5)] = JSON.parse(data);
+      } catch (error) {
+        console.error(`Failed to parse JSON file: ${fullPath}`, error);
+      }
+    } else {
+      result[item] = null; // Dead end
+    }
+  });
+
+  return result;
+}
+
+/**
+ * Recursively navigates through a directory and builds a tree structure.
+ *
+ * @param {string} value - The dot-separated string path to retrieve the value.
+ * @returns {Object} - Returns the directory tree structure.
+ * @throws {Error} - Throws an error if the directory cannot be read.
+ */
+function getTree(value) {
+  if (typeof value !== 'string') {
+    throw new Error('Value must be string');
+  }
+
+  const clone = this._clone();
+  const pointers = value.split('.').filter(p => p !== '');
+
+  let currentDir = clone.dbPath;
+
+  for (let i = 0; i < pointers.length; i++) {
+    if (clone.valueType == ValueType.DIRECTORY) {
+      currentDir = path.join(currentDir, pointers[i]);
+
+      if (fs.existsSync(currentDir + '.json')) {
+        clone.pointers = pointers.slice(i, pointers.length);
+        clone._getFile();
+      } else {
+        clone.targetFile = currentDir;
+      }
+    }
+  }
+
+  if (clone.valueType == ValueType.FILE) {
+    clone._fileNavigator();
+    return clone.data;
+  } else {
+    return traverseDir(currentDir);
+  }
+}
+
+export { dirNavigator, getFile, fileNavigator, get, getTree };
