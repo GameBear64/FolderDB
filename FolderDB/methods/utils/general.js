@@ -64,9 +64,12 @@ function populate(location) {
     }
   }
 
-  if (current.includes('.')) {
-    const clone = this._clone({ clean: true });
+  const clone = this._clone({ clean: true });
+
+  if (!Array.isArray(current)) {
     this.data[pointers] = clone._getTree(current);
+  } else {
+    this.data[pointers] = current.map(item => clone._getTree(item));
   }
 
   return this;

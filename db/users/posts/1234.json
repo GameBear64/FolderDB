@@ -26,5 +26,6 @@
   "likes": 64,
   "updated_at": 1724528363207,
   "will_update_at": 1724528368208,
-  "ref": "products.0"
+  "ref": "products.0",
+  "manyRefs": ["products.0", "products.1", "products.2"]
 }
