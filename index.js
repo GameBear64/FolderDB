@@ -19,8 +19,14 @@ console.log('==============================================');
 // ==========
 
 // db.get('users.posts.1234').set('likes', 0);
-const r = db.get('users.posts.1234.likes').inc();
+// const r = db.get('users.posts.1234.likes').inc();
 
-console.log(r);
+// console.log(r);
+
+// db.get('users.posts.1234').set('ref', 'products.0');
+
+console.log(db.get('users.posts.1234').populate('ref').data);
+
+// console.log(db.getTree('products.0'));
 
 console.log('==============================================');

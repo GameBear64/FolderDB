@@ -1,17 +1,34 @@
-function toLowerCase() {
-  let value = this.value();
-  if (typeof value !== 'string') throw new Error('You can only use .toLowerCase() on strings.');
+import { CaseFormat } from '../../utils/enums';
 
-  this.set(value.toLowerCase());
-  return this;
-}
+function changeCase(format) {
+  let value = this.data;
 
-function toUpperCase() {
-  let value = this.value();
-  if (typeof value !== 'string') throw new Error('You can only use .toUpperCase() on strings.');
+  if (typeof value !== 'string') throw new Error('You can only use changeCase on strings.');
 
-  this.set(value.toUpperCase());
-  return this;
+  switch (format) {
+    case CaseFormat.LOWER:
+      return value.toLowerCase();
+    case CaseFormat.UPPER:
+      return value.toUpperCase();
+    case CaseFormat.PASCAL:
+      return value.replace(/\w+/g, word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+    case CaseFormat.SNAKE:
+      return value.replace(/\W+/g, '_').toLowerCase();
+    case CaseFormat.CAMEL:
+      return value
+        .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => (index == 0 ? match.toLowerCase() : match.toUpperCase()))
+        .replace(/\s+/g, '');
+    case CaseFormat.KEBAB:
+      return value.replace(/\W+/g, '-').toLowerCase();
+    case CaseFormat.FLAT:
+      return value.replace(/\W+/g, '').toLowerCase();
+    case CaseFormat.TRAIN:
+      return value
+        .replace(/\W+/g, '-')
+        .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => (index == 0 ? match.toUpperCase() : match.toUpperCase()));
+    default:
+      throw new Error('Unsupported case format.');
+  }
 }
 
 function toString(method, save = false) {
@@ -80,6 +97,6 @@ function reverse(save = false) {
 // sanitize - removes dangerous characters, unicode and other
 // toCase - you can chose a case to transform the characters to - upper, lower, kebab, snake, pascal
 
-export { toLowerCase, toUpperCase, toString, trim, replace, reverse };
+export { changeCase, toString, trim, replace, reverse };
 
 // NOTE: Copied from ThunderDB, will need a rework

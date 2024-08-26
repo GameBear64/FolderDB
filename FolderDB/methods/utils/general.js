@@ -1,10 +1,7 @@
-function type() {
-  let value = this.value();
-  return Object.prototype.toString.call(value).slice(8, -1).toLowerCase();
-}
+import { ValueType } from '../../utils/enums';
 
 function isEmpty() {
-  let value = this.value();
+  let value = this.data;
 
   if (value === null || value === undefined) return true;
 
@@ -37,18 +34,53 @@ function isEqual(compareValue) {
     return false;
   };
 
-  return deepEqual(this.value(), compareValue);
+  return deepEqual(this.data, compareValue);
 }
 
 function log() {
-  console.log(this.value());
+  console.log(this.data);
   return this;
 }
 
 function tap(callback) {
   if (typeof callback !== 'function') throw new Error('You must provide a function to tap().');
-  callback(this.value());
+  callback(this.data);
   return this;
 }
+
+function populate(location) {
+  if (this.valueType == ValueType.VALUE) {
+    throw new Error('You can only populate at the value level.');
+  }
+
+  const pointers = location.split('.').filter(p => p !== '');
+  let current = this.data;
+
+  for (const key of pointers) {
+    if (current.hasOwnProperty(key)) {
+      current = current[key];
+    } else {
+      throw new Error(`Path not found: ${key}`);
+    }
+  }
+
+  if (current.includes('.')) {
+    const clone = this._clone({ clean: true });
+    this.data[pointers] = clone._getTree(current);
+  }
+
+  return this;
+}
+
+function select(desiredFields) {
+  this.data = Object.assign(
+    {},
+    ...desiredFields.map(field => ([field] in this.data ? { [field]: this.data[field] } : {}))
+  );
+
+  return this;
+}
+
+export { populate };
 
 // NOTE: Some provided by GPT, check and test

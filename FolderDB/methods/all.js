@@ -7,7 +7,7 @@ import * as numbers from './data/numbers';
 // import * as arrays from './data/arrays';
 
 // import * as reference from './utils/reference';
-// import * as general from './utils/general';
+import * as general from './utils/general';
 import * as time from './utils/time';
 
-export default { ...read, ...write, ...numbers, ...time };
+export default { ...read, ...write, ...numbers, ...general, ...time };

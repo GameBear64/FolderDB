@@ -1,7 +1,7 @@
 import TaskQueue from './utils/queue';
 import methods from './methods/all';
 
-import { ValueType } from './utils/enums';
+import * as e from './utils/enums';
 
 class FolderDB {
   /**
@@ -21,7 +21,7 @@ class FolderDB {
     this.pointers = [];
     this.targetFile = this.dbPath;
     this.data = null;
-    this.valueType = ValueType.DIRECTORY;
+    this.valueType = e.ValueType.DIRECTORY;
 
     this.__bindMethods(this, Object.values(methods));
   }
@@ -35,8 +35,15 @@ class FolderDB {
   }
 
   // Clone method to create a new instance with the same state
-  _clone() {
+  _clone({ clean } = { clean: false }) {
     const clone = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
+
+    if (clean) {
+      clone.pointers = [];
+      clone.targetFile = this.dbPath;
+      clone.data = null;
+      clone.valueType = e.ValueType.DIRECTORY;
+    }
 
     this.__bindMethods(clone, Object.values(methods));
 
@@ -44,4 +51,5 @@ class FolderDB {
   }
 }
 
+export const enums = Object.fromEntries(Object.entries(e));
 export default FolderDB;
