@@ -10,7 +10,7 @@ import { ValueType } from '../../utils/enums';
  * @returns {Object|this} Returns the current instance or an object indicating the next action.
  * @throws {Error} Throws an error if the directory cannot be read.
  */
-function dirNavigator(directory = this.dbPath) {
+function _dirNavigator(directory = this.dbPath) {
   if (!fs.existsSync(directory) || !fs.lstatSync(directory).isDirectory()) {
     throw new Error(`Invalid directory path: ${directory}`);
   }
@@ -25,7 +25,7 @@ function dirNavigator(directory = this.dbPath) {
   if (dir.includes(this.pointers[0])) {
     this.targetFile = path.join(this.targetFile, this.pointers[0]);
 
-    return this._dirNavigator(path.join(directory, this.pointers.shift()));
+    return this.__dirNavigator(path.join(directory, this.pointers.shift()));
   }
 
   return { doNext: true };
@@ -37,7 +37,7 @@ function dirNavigator(directory = this.dbPath) {
  * @returns {void}
  * @throws {Error} - Throws an error if the file cannot be read or parsed.
  */
-function getFile() {
+function _getFile() {
   if (!this.targetFile.includes('.json')) {
     this.targetFile = path.join(this.targetFile, `${this.pointers[0]}.json`);
     this.pointers.shift();
@@ -59,7 +59,7 @@ function getFile() {
  * @returns {void}
  * @throws {Error} - Throws an error if a path in the pointers does not exist in the data.
  */
-function fileNavigator() {
+function _fileNavigator() {
   if (!this.pointers || !this.data) {
     throw new Error('Pointers or data not properly initialized.');
   }
@@ -93,14 +93,14 @@ function get(value) {
   clone.pointers = value.split('.').filter(p => p !== '');
 
   if (clone.valueType == ValueType.DIRECTORY) {
-    const { doNext } = clone._dirNavigator();
+    const { doNext } = clone.__dirNavigator();
 
     if (doNext) {
-      clone._getFile();
-      clone._fileNavigator();
+      clone.__getFile();
+      clone.__fileNavigator();
     }
   } else {
-    clone._fileNavigator();
+    clone.__fileNavigator();
   }
 
   return clone;
@@ -153,7 +153,7 @@ function getTree(value) {
 
       if (fs.existsSync(currentDir + '.json')) {
         clone.pointers = pointers.slice(i, pointers.length);
-        clone._getFile();
+        clone.__getFile();
       } else {
         clone.targetFile = currentDir;
       }
@@ -161,7 +161,7 @@ function getTree(value) {
   }
 
   if (clone.valueType == ValueType.FILE) {
-    clone._fileNavigator();
+    clone.__fileNavigator();
     return clone.data;
   } else {
     return traverseDir(currentDir);
@@ -190,8 +190,8 @@ function goBack(steps = 1) {
 
     switch (this.valueType) {
       case ValueType.VALUE:
-        this._getFile();
-        this._fileNavigator();
+        this.__getFile();
+        this.__fileNavigator();
         break;
 
       case ValueType.FILE:
@@ -208,4 +208,4 @@ function goBack(steps = 1) {
   return this;
 }
 
-export { dirNavigator, getFile, fileNavigator, get, getTree, goBack };
+export { _dirNavigator, _getFile, _fileNavigator, get, getTree, goBack };

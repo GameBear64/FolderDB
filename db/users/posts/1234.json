@@ -23,7 +23,6 @@
       "nest": "nested new value"
     }
   },
-  "likes": 51,
   "matrix": [
     0,
     1,
@@ -32,11 +31,14 @@
       5
     ]
   ],
-  "obj": {}
-}
+  "obj": {},
   "likes": 64,
-  "updated_at": 1724528363207,
-  "will_update_at": 1724528368208,
+  "updated_at": 1724788089944,
+  "will_update_at": 1724788094945,
   "ref": "products.0",
-  "manyRefs": ["products.0", "products.1", "products.2"]
+  "manyRefs": [
+    "products.0",
+    "products.1",
+    "products.2"
+  ]
 }
