@@ -4,8 +4,9 @@ import { ValueType } from "../../utils/enums";
 import * as fs from "fs";
 
 async function createFolder(name) {
-  fs.mkdirSync(name, { recursive: true });
-
+  fs.mkdirSync(this.targetFile.replaceAll("\\", "/") + "/" + name, {
+    recursive: true,
+  });
   return this;
 }
 
@@ -15,6 +16,10 @@ async function createFile(name) {
   const targetFile = this.targetFile.replaceAll("\\", "/");
   if (name.includes("/")) {
     this._createFolder(targetFile + "/" + pointers.join("/"));
+    console.log(
+      targetFile + "/" + [...pointers, fileName].join("/") + ".json",
+      "👌"
+    );
     fs.writeFileSync(
       targetFile + "/" + [...pointers, fileName].join("/") + ".json",
       JSON.stringify({})

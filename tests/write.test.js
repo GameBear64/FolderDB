@@ -96,7 +96,7 @@ describe("[SET]", () => {
 });
 
 describe("[FILE]", () => {
-  test.only("Creating a file directory", async () => {
+  test("Creating a file directory", async () => {
     db.get("users").createFile("newFile");
     db.get("users").createFile("folder/new");
 
@@ -115,10 +115,25 @@ describe("[FILE]", () => {
   });
 });
 
-describe("[FOLDER]", () => {});
+describe("[FOLDER]", () => {
+  test("Creating a folder", async () => {
+    db.get("users").createFolder("testFolder");
+
+    expect(!!db.get("users.testFolder")).toEqual(true);
+    expect(!!fs.existsSync("./db/users/testFolder")).toEqual(true);
+  });
+});
 
 describe("[RENAME]", () => {});
 
-describe("[REMOVE]", () => {});
+describe("[REMOVE]", () => {
+  test("Removing a file", async () => {
+    db.get("users").createFile("testRemove");
+    db.get("users.testRemove").remove();
+  });
 
-describe("[ERRORS]", () => {});
+  test("Removing a folder", async () => {
+    db.get("users").createFile("new1/new");
+    db.get("users.removeFolder").remove();
+  });
+});
