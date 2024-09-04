@@ -124,16 +124,27 @@ describe("[FOLDER]", () => {
   });
 });
 
-describe("[RENAME]", () => {});
-
 describe("[REMOVE]", () => {
   test("Removing a file", async () => {
     db.get("users").createFile("testRemove");
     db.get("users.testRemove").remove();
+
+    expect(!!fs.existsSync("./db/users/testRemove")).toEqual(false);
   });
 
   test("Removing a folder", async () => {
-    db.get("users").createFile("new1/new");
-    db.get("users.removeFolder").remove();
+    db.get("users").createFolder("new1");
+    db.get("users.new1").remove();
+
+    expect(!!fs.existsSync("./db/users/new1")).toEqual(false);
+  });
+});
+
+describe("[RENAME]", () => {
+  test("Renaming a file", async () => {
+    db.get("users").createFile("renameFile");
+    db.get("users.renameFile").rename("renamedFile");
+
+    expect(!!fs.existsSync("./db/users/renamedFile")).toEqual(true);
   });
 });

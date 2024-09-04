@@ -13,13 +13,10 @@ async function createFolder(name) {
 async function createFile(name) {
   const pointers = name.split("/");
   const fileName = pointers.splice(-1)[0];
-  const targetFile = this.targetFile.replaceAll("\\", "/");
+  let targetFile = this.targetFile.replaceAll("\\", "/");
+
   if (name.includes("/")) {
     this._createFolder(targetFile + "/" + pointers.join("/"));
-    console.log(
-      targetFile + "/" + [...pointers, fileName].join("/") + ".json",
-      "👌"
-    );
     fs.writeFileSync(
       targetFile + "/" + [...pointers, fileName].join("/") + ".json",
       JSON.stringify({})
@@ -71,12 +68,10 @@ async function rename(newName) {
     case ValueType.FILE:
       const foldersDir = this.targetFile.split("/").slice(0, -1);
       let newPath = [...foldersDir, newName].join("/");
-
       if (this.valueType === ValueType.FILE) {
         newPath += ".json";
       }
-
-      fs.renameSync(this.targetFile, newPath);
+      fs.renameSync(this.targetFile, this.targetFile + "\\" + newPath);
       break;
     case ValueType.VALUE:
       let target = JSON.parse(fs.readFileSync(this.targetFile, "UTF-8"));
