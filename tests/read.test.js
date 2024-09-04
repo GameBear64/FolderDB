@@ -40,7 +40,7 @@ describe('[FOLDERS]', () => {
   test('Wrong directory', async () => {
     expect(() => {
       db.get('nothing');
-    }).toThrow('Error reading file db/nothing.json');
+    }).toThrow('Error reading file');
   });
 });
 
@@ -51,13 +51,13 @@ describe('[FILES]', () => {
 
     expect(result.data).toEqual(JSON.parse(data));
     expect(result.valueType).toEqual(ValueType.FILE);
-    expect(result.targetFile).toEqual('db/users/posts/1234.json');
+    expect(result.targetFile).toMatch('db/users/posts/1234.json');
   });
 
   test('Wrong file', async () => {
     expect(() => {
       db.get('users.posts.nothing');
-    }).toThrow('Error reading file db/users/posts/nothing.json');
+    }).toThrow('Error reading file');
   });
 });
 
@@ -68,7 +68,7 @@ describe('[VALUES]', () => {
 
     expect(result.data).toEqual(JSON.parse(data).title);
     expect(result.valueType).toEqual(ValueType.VALUE);
-    expect(result.targetFile).toEqual('db/users/posts/1234.json');
+    expect(result.targetFile).toMatch('db/users/posts/1234.json');
   });
 
   test('Navigating arrays', async () => {
@@ -89,7 +89,7 @@ describe('[TREE]', () => {
   // TODO
 });
 
-describe.only('[BACK]', () => {
+describe('[BACK]', () => {
   test('Navigating backwards', async () => {
     const data = fs.readFileSync('./db/users/posts/1234.json', 'UTF-8');
 

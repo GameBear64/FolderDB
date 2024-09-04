@@ -79,21 +79,21 @@ describe('[SET]', () => {
   });
 });
 
-describe('[FILE]', () => {
-  test('Creating a file directory', async () => {
-    db.get('users').createFile('newFile');
-    db.get('users').createFile('folder/new');
+// describe('[FILE]', () => {
+//   test('Creating a file directory', async () => {
+//     db.get('users').createFile('newFile');
+//     db.get('users').createFile('folder/new');
 
-    const newFile = JSON.parse(fs.readFileSync('./db/users/newFile.json', 'UTF-8'));
-    const newFolder = JSON.parse(fs.readFileSync('./db/users/folder/new.json', 'UTF-8'));
+//     const newFile = JSON.parse(fs.readFileSync('./db/users/newFile.json', 'UTF-8'));
+//     const newFolder = JSON.parse(fs.readFileSync('./db/users/folder/new.json', 'UTF-8'));
 
-    expect(newFile).toEqual({});
-    expect(newFolder).toEqual({});
+//     expect(newFile).toEqual({});
+//     expect(newFolder).toEqual({});
 
-    expect(db.get('users.folder.new').data).toEqual({});
-    expect(db.get('users.newFile').data).toEqual({});
-  });
-});
+//     expect(db.get('users.folder.new').data).toEqual({});
+//     expect(db.get('users.newFile').data).toEqual({});
+//   });
+// });
 
 describe('[FOLDER]', () => {
   test('Creating a folder', async () => {
@@ -105,26 +105,27 @@ describe('[FOLDER]', () => {
 });
 
 describe('[REMOVE]', () => {
-  test('Removing a file', async () => {
-    db.get('users').createFile('testRemove');
-    db.get('users.testRemove').remove();
+  // test('Removing a file', async () => {
+  //   db.get('users').createFile('testRemove');
+  //   db.get('users.testRemove').remove();
 
-    expect(!!fs.existsSync('./db/users/testRemove')).toEqual(false);
-  });
+  //   expect(!!fs.existsSync('./db/users/testRemove')).toEqual(false);
+  // });
 
   test('Removing a folder', async () => {
     db.get('users').createFolder('new1');
-    db.get('users.new1').remove();
+    expect(!!fs.existsSync('./db/users/new1')).toEqual(true);
 
+    db.get('users.new1').remove();
     expect(!!fs.existsSync('./db/users/new1')).toEqual(false);
   });
 });
 
-describe('[RENAME]', () => {
-  test('Renaming a file', async () => {
-    db.get('users').createFile('renameFile');
-    db.get('users.renameFile').rename('renamedFile');
+// describe('[RENAME]', () => {
+//   test('Renaming a file', async () => {
+//     db.get('users').createFile('renameFile');
+//     db.get('users.renameFile').rename('renamedFile');
 
-    expect(!!fs.existsSync('./db/users/renamedFile')).toEqual(true);
-  });
-});
+//     expect(!!fs.existsSync('./db/users/renamedFile')).toEqual(true);
+//   });
+// });

@@ -29,11 +29,11 @@ console.log('==============================================');
 
 // console.log(db.getTree('products.0'));
 
-const r = db.get('users.posts.1234.author.name');
-console.log(r.data);
+// const r = db.get('users.posts.1234.author.name');
+// console.log(r.data);
 
-r.back(5);
-console.log(r.data);
+// r.back(5);
+// console.log(r.data);
 
 // console.log(db.get('images.1-2').data);
 // console.log(db.get('users.posts.1234').data);
