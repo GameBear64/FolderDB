@@ -89,24 +89,24 @@ describe('[TREE]', () => {
   // TODO
 });
 
-describe('[BACK]', () => {
+describe.only('[BACK]', () => {
   test('Navigating backwards', async () => {
     const data = fs.readFileSync('./db/users/posts/1234.json', 'UTF-8');
 
     const result = db.get('users.posts.1234.author.name');
     expect(result.data).toEqual(JSON.parse(data).author.name);
 
-    result.goBack();
+    result.back();
     expect(result.data).toEqual(JSON.parse(data).author);
 
-    result.goBack(2);
-    const dirData = fs.readdirSync('./db/users');
+    result.back(2);
+    const dirData = fs.readdirSync('./db/users/posts');
     expect(result.data).toEqual(dirData);
   });
 
   test('Wrong back value', async () => {
     expect(() => {
-      db.get('users.posts.1234').goBack('1234');
+      db.get('users.posts.1234').back('1234');
     }).toThrow('Steps must be a positive number');
   });
 });

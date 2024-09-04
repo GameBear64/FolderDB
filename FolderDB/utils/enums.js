@@ -1,16 +1,16 @@
 export const ValueType = Object.freeze({
-  DIRECTORY: 'DIRECTORY',
-  FILE: 'FILE',
-  VALUE: 'VALUE',
+  DIRECTORY: Symbol('DIRECTORY'),
+  FILE: Symbol('FILE'),
+  VALUE: Symbol('VALUE'),
 });
 
 export const CaseFormat = Object.freeze({
-  LOWER: 'lower',
-  UPPER: 'upper',
-  PASCAL: 'pascal',
-  SNAKE: 'snake',
-  CAMEL: 'camel',
-  KEBAB: 'kebab',
-  FLAT: 'flat',
-  TRAIN: 'train',
+  LOWER: Symbol('lower'),
+  UPPER: Symbol('upper'),
+  PASCAL: Symbol('pascal'),
+  SNAKE: Symbol('snake'),
+  CAMEL: Symbol('camel'),
+  KEBAB: Symbol('kebab'),
+  FLAT: Symbol('flat'),
+  TRAIN: Symbol('train'),
 });

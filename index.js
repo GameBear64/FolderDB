@@ -25,8 +25,17 @@ console.log('==============================================');
 
 // db.get('users.posts.1234').set('ref', 'products.0');
 
-console.log(db.get('users.posts.1234').populate('manyRefs').populate('ref').data);
+// console.log(db.get('users.posts.1234').populate('manyRefs').populate('ref').data);
 
 // console.log(db.getTree('products.0'));
+
+const r = db.get('users.posts.1234.author.name');
+console.log(r.data);
+
+r.back(5);
+console.log(r.data);
+
+// console.log(db.get('images.1-2').data);
+// console.log(db.get('users.posts.1234').data);
 
 console.log('==============================================');

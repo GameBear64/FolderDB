@@ -1,7 +1,8 @@
-import TaskQueue from "./utils/queue";
-import methods from "./methods/all";
+import TaskQueue from './utils/queue';
+import methods from './methods/all';
+import path from 'path';
 
-import * as e from "./utils/enums";
+import * as e from './utils/enums';
 
 class FolderDB {
   /**
@@ -11,11 +12,10 @@ class FolderDB {
    */
   constructor(options) {
     if (FolderDB._instance && !options.mergeInstances) {
-      throw new Error("Only one instance allowed!");
+      throw new Error('Only one instance allowed!');
     }
     FolderDB._instance = this;
-    const { resolve } = require("path");
-    this.dbPath = resolve(options.dbPath);
+    this.dbPath = path.resolve(options.dbPath);
     this.queue = new TaskQueue();
 
     this.pointers = [];
@@ -26,21 +26,17 @@ class FolderDB {
     this.__bindMethods(this, Object.values(methods));
   }
   __bindMethods(instance, methods) {
-    methods.forEach((method) => {
+    methods.forEach(method => {
       // NOTE: this way we can skip the queue for internal use
-      instance["_" + method.name] = method.bind(instance);
+      instance['_' + method.name] = method.bind(instance);
 
-      instance[method.name] = (...args) =>
-        this.queue.add(() => method.apply(instance, args));
+      instance[method.name] = (...args) => this.queue.add(() => method.apply(instance, args));
     });
   }
 
   // Clone method to create a new instance with the same state
   _clone({ clean } = { clean: false }) {
-    const clone = Object.assign(
-      Object.create(Object.getPrototypeOf(this)),
-      this
-    );
+    const clone = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
 
     if (clean) {
       clone.pointers = [];

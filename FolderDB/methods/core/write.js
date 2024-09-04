@@ -1,52 +1,44 @@
-import assert from "node:assert";
-import { ValueType } from "../../utils/enums";
+import { ValueType } from '../../utils/enums';
 
-import * as fs from "fs";
+import * as fs from 'fs';
 
 async function createFolder(name) {
-  fs.mkdirSync(this.targetFile.replaceAll("\\", "/") + "/" + name, {
+  fs.mkdirSync(this.targetFile.replaceAll('\\', '/') + '/' + name, {
     recursive: true,
   });
   return this;
 }
 
+// TODO: create image file, any file
 async function createFile(name) {
-  const pointers = name.split("/");
+  const pointers = name.split('/');
   const fileName = pointers.splice(-1)[0];
-  let targetFile = this.targetFile.replaceAll("\\", "/");
+  const targetFile = this.targetFile.replaceAll('\\', '/'); // NOTE: Windows fix
 
-  if (name.includes("/")) {
-    this._createFolder(targetFile + "/" + pointers.join("/"));
-    fs.writeFileSync(
-      targetFile + "/" + [...pointers, fileName].join("/") + ".json",
-      JSON.stringify({})
-    );
+  if (name.includes('/')) {
+    this._createFolder(targetFile + '/' + pointers.join('/'));
+    fs.writeFileSync(targetFile + '/' + [...pointers, fileName].join('/') + '.json', JSON.stringify({}));
   } else {
-    fs.writeFileSync(targetFile + "/" + fileName + ".json", JSON.stringify({}));
+    fs.writeFileSync(targetFile + '/' + fileName + '.json', JSON.stringify({}));
   }
   return this;
 }
 
 function set(_key, _value) {
   if (this.valueType == ValueType.DIRECTORY) {
-    throw new Error("Only values can be set");
+    throw new Error('Only values can be set');
   }
 
   const value = _value !== undefined ? _value : _key;
-  const extraPointers =
-    _value === undefined
-      ? []
-      : _key.includes(".")
-      ? _key.split(".").filter((p) => p != "")
-      : [_key];
+  const extraPointers = _value === undefined ? [] : _key.includes('.') ? _key.split('.').filter(p => p != '') : [_key];
   const pointers = [...this.pointers, ...extraPointers];
 
-  this.data = JSON.parse(fs.readFileSync(this.targetFile, "UTF-8"));
+  this.data = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
   let current = this.data; // reference, pointer
 
   for (let i = 0; i < pointers.length - 1; i++) {
     const key = pointers[i];
-    if (typeof current[key] !== "object" || current[key] === null) {
+    if (typeof current[key] !== 'object' || current[key] === null) {
       current[key] = {};
     }
     current = current[key];
@@ -66,15 +58,16 @@ async function rename(newName) {
   switch (this.valueType) {
     case ValueType.DIRECTORY:
     case ValueType.FILE:
-      const foldersDir = this.targetFile.split("/").slice(0, -1);
-      let newPath = [...foldersDir, newName].join("/");
+      const foldersDir = this.targetFile.split('/').slice(0, -1);
+      let newPath = [...foldersDir, newName].join('/');
+
       if (this.valueType === ValueType.FILE) {
-        newPath += ".json";
+        newPath += '.json';
       }
-      fs.renameSync(this.targetFile, this.targetFile + "\\" + newPath);
+      fs.renameSync(this.targetFile, this.targetFile + '\\' + newPath);
       break;
     case ValueType.VALUE:
-      let target = JSON.parse(fs.readFileSync(this.targetFile, "UTF-8"));
+      let target = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
       const oldKey = this.pointers[this.pointers.length - 1];
 
       if (target[oldKey] !== undefined) {
@@ -97,7 +90,7 @@ async function remove() {
       fs.unlinkSync(this.targetFile);
       break;
     case ValueType.VALUE:
-      let target = JSON.parse(fs.readFileSync(this.targetFile, "UTF-8"));
+      let target = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
 
       const keyToRemove = this.pointers[this.pointers.length - 1];
 

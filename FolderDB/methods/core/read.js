@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import path from 'path';
 
 import { ValueType } from '../../utils/enums';
+const filenameRegex = /(.*\/)?(?<name>.*)\.(?<type>.*)$/;
 
 /**
  * Navigates through a directory structure based on the current pointers.
@@ -38,14 +39,37 @@ function _dirNavigator(directory = this.dbPath) {
  * @throws {Error} - Throws an error if the file cannot be read or parsed.
  */
 function _getFile() {
-  if (!this.targetFile.includes('.json')) {
-    this.targetFile = path.join(this.targetFile, `${this.pointers[0]}.json`);
-    this.pointers.shift();
+  // Going back with .back()
+  if (fs.lstatSync(this.targetFile).isFile()) {
+    const fileDetails = filenameRegex.exec(this.targetFile).groups;
+
+    if (fileDetails.type == 'json') {
+      let data = fs.readFileSync(this.targetFile, 'UTF-8');
+      this.data = JSON.parse(data);
+    } else {
+      this.data = { buffer: fs.readFileSync(this.targetFile), ...fileDetails };
+    }
+
+    this.valueType = ValueType.FILE;
+    return;
   }
 
   try {
-    let data = fs.readFileSync(this.targetFile, 'UTF-8');
-    this.data = JSON.parse(data);
+    let currentDir = fs.readdirSync(this.targetFile);
+    const foundFile = currentDir.find(file => filenameRegex.exec(file).groups.name == this.pointers[0]);
+    const fileDetails = filenameRegex.exec(foundFile).groups;
+
+    if (!foundFile) throw new Error('Target file not found');
+
+    this.targetFile = path.join(this.targetFile, foundFile);
+    this.pointers.shift();
+
+    if (fileDetails.type == 'json') {
+      let data = fs.readFileSync(this.targetFile, 'UTF-8');
+      this.data = JSON.parse(data);
+    } else {
+      this.data = { buffer: fs.readFileSync(this.targetFile), ...fileDetails };
+    }
 
     this.valueType = ValueType.FILE;
   } catch (error) {
@@ -106,7 +130,7 @@ function get(value) {
   return clone;
 }
 
-function traverseDir(currentDir) {
+function _traverseDir(currentDir) {
   const dirContent = fs.readdirSync(currentDir);
   const result = {};
 
@@ -164,7 +188,7 @@ function getTree(value) {
     clone.__fileNavigator();
     return clone.data;
   } else {
-    return traverseDir(currentDir);
+    return _traverseDir(currentDir);
   }
 }
 
@@ -175,13 +199,13 @@ function getTree(value) {
  * @returns {this} - Returns the current instance for chaining.
  * @throws {Error} - Throws an error if unable to navigate back.
  */
-function goBack(steps = 1) {
+function back(steps = 1) {
   if (typeof steps !== 'number' || steps < 1) {
     throw new Error('Steps must be a positive number');
   }
 
-  const totalDepth = this.targetFile.split('/').length - 1 + this.pointers.length;
-  if (steps >= totalDepth) {
+  const totalDepth = this.targetFile.replace(this.dbPath, '').split('/').length - 1 + this.pointers.length;
+  if (steps > totalDepth) {
     throw new Error('Steps cannot be more than the available depth');
   }
 
@@ -195,9 +219,9 @@ function goBack(steps = 1) {
         break;
 
       case ValueType.FILE:
-        this.pointers = path.dirname(this.targetFile).split('/').slice(1, -1);
-        this.targetFile = this.dbPath;
         this.valueType = ValueType.DIRECTORY;
+        this.pointers = path.dirname(this.targetFile.replace(this.dbPath, '')).split('/').slice(1);
+        this.targetFile = this.dbPath;
 
       case ValueType.DIRECTORY:
         this.data = fs.readdirSync(`${this.targetFile}/${this.pointers.join('/')}`);
@@ -208,4 +232,4 @@ function goBack(steps = 1) {
   return this;
 }
 
-export { _dirNavigator, _getFile, _fileNavigator, get, getTree, goBack };
+export { _dirNavigator, _getFile, _fileNavigator, get, getTree, back };
