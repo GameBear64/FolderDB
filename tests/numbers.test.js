@@ -1,36 +1,36 @@
 import { describe, expect, test } from 'bun:test';
 import * as fs from 'fs';
 
-import FolderDB from '../FolderDB/index.js';
+import FolderDB from '../src/index.js';
 
-const db = new FolderDB({ dbPath: './db', mergeInstances: true });
+const db = new FolderDB({ dbPath: './test-db', mergeInstances: true });
 
 describe('[INC]', () => {
-  test('Incrementing', async () => {
-    const result = db.get('users.posts.1234.likes').inc();
-    let data = JSON.parse(fs.readFileSync('./db/users/posts/1234.json', 'UTF-8'));
+  test('Incrementing', () => {
+    const result = db.get('users.posts.first.likes').inc();
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
     expect(data.likes).toEqual(result);
   });
 
-  test('Error handling', async () => {
+  test('Error handling', () => {
     expect(() => {
-      db.get('users.posts.1234.title').inc();
+      db.get('users.posts.first.title').inc();
     }).toThrow('You can only increment numbers.');
   });
 });
 
 describe('[DEC]', () => {
-  test('Decrementing', async () => {
-    const result = db.get('users.posts.1234.likes').dec();
-    let data = JSON.parse(fs.readFileSync('./db/users/posts/1234.json', 'UTF-8'));
+  test('Decrementing', () => {
+    const result = db.get('users.posts.first.likes').dec();
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
     expect(data.likes).toEqual(result);
   });
 
-  test('Error handling', async () => {
+  test('Error handling', () => {
     expect(() => {
-      db.get('users.posts.1234.title').dec();
+      db.get('users.posts.first.title').dec();
     }).toThrow('You can only decrement numbers.');
   });
 });

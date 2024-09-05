@@ -1,25 +1,25 @@
 import { ValueType } from '../../utils/enums';
 
 import * as fs from 'fs';
+import path from 'path';
 
 async function createFolder(name) {
-  fs.mkdirSync(this.targetFile.replaceAll('\\', '/') + '/' + name, {
-    recursive: true,
-  });
+  fs.mkdirSync(path.resolve(this.targetFile, name), { recursive: true });
+
   return this;
 }
 
-// TODO: create image file, any file
-async function createFile(name) {
-  const pointers = name.split('/');
-  const fileName = pointers.splice(-1)[0];
-  const targetFile = this.targetFile.replaceAll('\\', '/'); // NOTE: Windows fix
+async function createFile(name, buffer) {
+  const details = path.parse(name);
 
-  if (name.includes('/')) {
-    this._createFolder(targetFile + '/' + pointers.join('/'));
-    fs.writeFileSync(targetFile + '/' + [...pointers, fileName].join('/') + '.json', JSON.stringify({}));
+  if (details.dir != '') {
+    this._createFolder(path.resolve(this.targetFile, details.dir));
+  }
+
+  if (details.ext == '') {
+    fs.writeFileSync(path.resolve(this.targetFile, details.dir, details.name + '.json'), buffer || JSON.stringify({}));
   } else {
-    fs.writeFileSync(targetFile + '/' + fileName + '.json', JSON.stringify({}));
+    fs.writeFileSync(path.resolve(this.targetFile, details.dir, details.base), buffer);
   }
   return this;
 }
@@ -58,13 +58,7 @@ async function rename(newName) {
   switch (this.valueType) {
     case ValueType.DIRECTORY:
     case ValueType.FILE:
-      const foldersDir = this.targetFile.split('/').slice(0, -1);
-      let newPath = [...foldersDir, newName].join('/');
-
-      if (this.valueType === ValueType.FILE) {
-        newPath += '.json';
-      }
-      fs.renameSync(this.targetFile, this.targetFile + '\\' + newPath);
+      fs.renameSync(this.targetFile, path.resolve(path.parse(this.targetFile).dir, newName));
       break;
     case ValueType.VALUE:
       let target = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));

@@ -2,7 +2,6 @@ import * as fs from 'fs';
 import path from 'path';
 
 import { ValueType } from '../../utils/enums';
-const filenameRegex = /(.*\/)?(?<name>.*)\.(?<type>.*)$/;
 
 /**
  * Navigates through a directory structure based on the current pointers.
@@ -41,13 +40,12 @@ function _dirNavigator(directory = this.dbPath) {
 function _getFile() {
   // Going back with .back()
   if (fs.lstatSync(this.targetFile).isFile()) {
-    const fileDetails = filenameRegex.exec(this.targetFile).groups;
+    const fileDetails = path.parse(this.targetFile);
 
-    if (fileDetails.type == 'json') {
-      let data = fs.readFileSync(this.targetFile, 'UTF-8');
-      this.data = JSON.parse(data);
+    if (fileDetails.ext == '.json') {
+      this.data = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
     } else {
-      this.data = { buffer: fs.readFileSync(this.targetFile), ...fileDetails };
+      this.data = { buffer: fs.readFileSync(this.targetFile), name: fileDetails.name, ext: fileDetails.ext };
     }
 
     this.valueType = ValueType.FILE;
@@ -55,20 +53,18 @@ function _getFile() {
   }
 
   try {
-    let currentDir = fs.readdirSync(this.targetFile);
-    const foundFile = currentDir.find(file => filenameRegex.exec(file).groups.name == this.pointers[0]);
-    const fileDetails = filenameRegex.exec(foundFile).groups;
+    const currentDir = fs.readdirSync(this.targetFile);
+    const foundFile = path.parse(currentDir.find(file => path.parse(file).name == this.pointers[0]));
 
     if (!foundFile) throw new Error('Target file not found');
 
-    this.targetFile = path.join(this.targetFile, foundFile);
+    this.targetFile = path.join(this.targetFile, foundFile.base);
     this.pointers.shift();
 
-    if (fileDetails.type == 'json') {
-      let data = fs.readFileSync(this.targetFile, 'UTF-8');
-      this.data = JSON.parse(data);
+    if (foundFile.ext == '.json') {
+      this.data = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
     } else {
-      this.data = { buffer: fs.readFileSync(this.targetFile), ...fileDetails };
+      this.data = { buffer: fs.readFileSync(this.targetFile), name: foundFile.name, ext: foundFile.ext };
     }
 
     this.valueType = ValueType.FILE;

@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Slim Fit Men's Suit",
+    "category": ["men", "shirt", "pants", "top"],
+    "price": 199.99,
+    "description": "In need of that special something for a suitably special occasion? Look no further than our, well, latest suit jacket by Ted Baker. Featuring a comfortable wool blend and slim fit in black Panama, this piece is styled with a two button fastening, notch lapel and four-button cuffs. Ready to amp up your game? Do it in style with this Ted Baker piece and let the compliments roll in. 88% Wool 8% Polyester 4% Elastance",
+    "image": ["airplane", "1-2", "1-3", "1-4", "1-5"]
+  },
+  {
+    "id": 2,
+    "name": "Floral Print Summer Dress",
+    "category": ["women", "skirt"],
+    "price": 59.99,
+    "description": "Chiffon midi dress with puff sleeves and stunning embroidery detail on the yoke and sleeves, designed in collaboration with the V and A. Outer 100% Polyester. Inner 100% Polyester. Trim 100% Viscose. Embroidery 68% Polyester, 32% Metallised fibre.",
+    "image": ["2-1", "2-2", "2-3", "2-4"]
+  },
+  {
+    "id": 3,
+    "name": "Classic Denim Jacket",
+    "category": ["women", "top"],
+    "price": 79.99,
+    "description": "WARDROBE STAPLE. Come rain or shine, a classic denim jacket will always have your back. This stylish take on a wardrobe staple is designed to complete any look. Best of all, it will never go out of style.",
+    "image": ["3-1", "3-2", "3-3", "3-4"]
+  },
+  {
+    "id": 4,
+    "name": "Striped Knit Sweater",
+    "category": ["women", "shirt"],
+    "price": 49.99,
+    "description": "This sweater features a relaxed oversized fit and a stretchy rib knit. It has a rounded neckline and wide long sleeves. This sweater comes in stripe. 50% Viscose, 25% Polyester, 20% Polyamide, 5% Elastane",
+    "image": ["4-1", "4-2", "4-3", "4-4", "4-5"]
+  },
+  {
+    "id": 5,
+    "name": "Casual Linen Shirt",
+    "category": ["men", "top", "shirt"],
+    "price": 29.99,
+    "description": "Our linen blend shirt is a versatile addition to your seasonal wardrobe. Made from a soft fabric blend for comfort, this shirt is designed in a flattering length that can be worn tucked in or untucked. With a button-down collar, front button placket and chest pocket. Machine washable. 54% Linen, 46% Cotton.",
+    "image": ["5-1", "5-2", "5-3", "5-4", "5-5"]
+  }
+]
