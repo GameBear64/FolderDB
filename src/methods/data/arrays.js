@@ -1,17 +1,15 @@
 function push(...value) {
-  let list = this.value();
-
+  let list = this.data;
   if (!Array.isArray(list)) throw new Error('You can only push to arrays.');
 
   list.push(...value);
-  this.set(list);
+  this._set(list);
 
   return this;
 }
 
 function pushSet(...value) {
-  let list = this.value();
-
+  let list = this.data;
   if (!Array.isArray(list)) throw new Error('You can only push to arrays.');
 
   let newList = Array.from(value);
@@ -22,183 +20,120 @@ function pushSet(...value) {
   });
 
   list.push(...newList);
-  this.set(list);
+  this._set(list);
 
   return this;
 }
 
-function pull({ getList = false, save = false } = {}) {
-  let list = this.value();
+function pull({ result = false } = {}) {
+  let list = this.data;
   if (!Array.isArray(list)) throw new Error('You can only pull from arrays.');
 
-  let popped = list.pop();
+  let pulled = list.pop();
+  this._set(list);
 
-  if (save) this.set(list);
-  if (getList) return popped;
-
+  if (result) return pulled;
   return this;
 }
 
-function shift({ getList = false, save = false } = {}) {
-  let list = this.value();
+function shift({ result = false } = {}) {
+  let list = this.data;
   if (!Array.isArray(list)) throw new Error('You can only shift arrays.');
 
   let shifted = list.shift();
+  this._set(list);
 
-  if (save) this.set(list);
-  if (getList) return shifted;
-
+  if (result) return shifted;
   return this;
 }
 
 function unshift(...value) {
-  let list = this.value();
+  let list = this.data;
   if (!Array.isArray(list)) throw new Error('You can only unshift arrays.');
 
   list.unshift(...value);
-  this.set(list);
+  this._set(list);
 
   return this;
 }
 
-function every(func) {
-  let list = this.value();
+function splice(start, deleteCount, ...items) {
+  let list = this.data;
+  if (!Array.isArray(list)) throw new Error('You can only use .splice() on arrays.');
 
-  if (typeof func !== 'function') throw new Error('You can only pass functions to .every().');
-  if (!Array.isArray(list)) throw new Error('You can only check arrays.');
-
-  return list.every(func);
+  const removedItems = list.splice(start, deleteCount, ...items);
+  this._set(list);
+  return removedItems;
 }
 
-function some(func) {
-  let list = this.value();
-
-  if (typeof func !== 'function') throw new Error('You can only pass functions to .some().');
-  if (!Array.isArray(list)) throw new Error('You can only check arrays.');
-
-  return list.some(func);
-}
-
-function has(value) {
-  let list = this.value();
-
-  if (Array.isArray(list)) {
-    return list.includes(value);
-  } else if (list === Object(list)) {
-    return Object.keys(list).includes(value);
-  } else {
-    throw new Error('You can only check arrays or objects.');
-  }
-}
-
-function map(func, save = false) {
-  let list = this.value();
-
+function map(func, result = false) {
+  let list = this.data;
   if (typeof func !== 'function') throw new Error('You can only pass functions to .map().');
   if (!Array.isArray(list)) throw new Error('You can only map arrays.');
 
   list = list.map(func);
+  this._set(list);
 
-  if (save) {
-    this.set(list);
-    return this;
-  }
-  return list;
+  if (result) return list;
+  return this;
 }
 
-function sort(func, save = false) {
-  let list = this.value();
-
+function sort(func, result = false) {
+  let list = this.data;
   if (typeof func !== 'function' && func !== undefined)
     throw new Error('You can only pass functions or nothing to .sort().');
   if (!Array.isArray(list)) throw new Error('You can only sort arrays.');
 
   list.sort(func);
+  this._set(list);
 
-  if (save) {
-    this.set(list);
-    return this;
-  }
-  return list;
+  if (result) return list;
+  return this;
 }
 
-function filter(func, save = false) {
-  let list = this.value();
-
+function filter(func, result = false) {
+  let list = this.data;
   if (typeof func !== 'function') throw new Error('You can only pass functions to .filter().');
   if (!Array.isArray(list)) throw new Error('You can only filter arrays.');
 
   list = list.filter(func);
+  this._set(list);
 
-  if (save) {
-    this.set(list);
-    return this;
-  }
-  return list;
+  if (result) return list;
+  return this;
 }
 
-function reduce(func, save = false) {
-  let list = this.value();
-
+function reduce(func, result = false) {
+  let list = this.data;
   if (typeof func !== 'function') throw new Error('You can only pass functions to .reduce().');
   if (!Array.isArray(list)) throw new Error('You can only reduce arrays.');
 
   let reducedValue = list.reduce(func);
+  this._set(reducedValue);
 
-  if (save) {
-    this.set(reducedValue);
-    return this;
-  }
-  return reducedValue;
-}
-
-function length() {
-  let value = this.value();
-  if (value.length === undefined) throw new Error('Cannot get length.');
-
-  return value.length;
-}
-
-function concat(...arrays) {
-  let list = this.value();
-  if (!Array.isArray(list)) throw new Error('You can only use .concat() on arrays.');
-
-  const result = list.concat(...arrays);
-  this.set(result);
+  if (result) return reducedValue;
   return this;
 }
 
-function splice(start, deleteCount, ...items) {
-  let list = this.value();
-  if (!Array.isArray(list)) throw new Error('You can only use .splice() on arrays.');
+function concat(...arrays) {
+  let list = this.data;
+  if (!Array.isArray(list)) throw new Error('You can only use .concat() on arrays.');
 
-  const removedItems = list.splice(start, deleteCount, ...items);
-  this.set(list);
-  return removedItems;
-}
-
-function toArray() {
-  let value = this.value();
-
-  if (Array.isArray(value)) return value;
-
-  if (typeof value === 'string') return value.split('');
-
-  if (value === Object(value)) return Object.values(value);
-
-  return [value];
+  const result = list.concat(...arrays);
+  this._set(result);
+  return this;
 }
 
 function unique() {
-  let value = this.value();
+  let value = this.data;
   if (!Array.isArray(value)) throw new Error('unique() can only be used on arrays.');
 
-  this.set([...new Set(value)]);
+  this._set([...new Set(value)]);
   return this;
 }
 
 function chunk(size) {
-  let value = this.value();
+  let value = this.data;
   if (!Array.isArray(value)) throw new Error('chunk() can only be used on arrays.');
 
   const chunked = [];
@@ -206,25 +141,43 @@ function chunk(size) {
     chunked.push(value.slice(i, i + size));
   }
 
-  this.set(chunked);
+  this._set(chunked);
   return this;
 }
 
 function intersection(array) {
-  let value = this.value();
+  let value = this.data;
   if (!Array.isArray(value) || !Array.isArray(array)) throw new Error('intersection() can only be used on arrays.');
 
   const intersected = value.filter(v => array.includes(v));
-  this.set(intersected);
+  this._set(intersected);
+  return this;
+}
+
+function XOR(array) {
+  let value = this.data;
+  if (!Array.isArray(value) || !Array.isArray(array)) throw new Error('XOR() can only be used on arrays.');
+
+  const intersected = value.filter(v => !array.includes(v)).concat(array.filter(v => !value.includes(v)));
+  this._set(intersected);
   return this;
 }
 
 function difference(array) {
-  let value = this.value();
+  let value = this.data;
   if (!Array.isArray(value) || !Array.isArray(array)) throw new Error('difference() can only be used on arrays.');
 
   const diff = value.filter(v => !array.includes(v));
-  this.set(diff);
+  this._set(diff);
+  return this;
+}
+
+function differenceInsert(array) {
+  let value = this.data;
+  if (!Array.isArray(value) || !Array.isArray(array)) throw new Error('differenceInsert() can only be used on arrays.');
+
+  const diff = array.filter(v => !value.includes(v));
+  this._set(diff);
   return this;
 }
 
@@ -234,21 +187,18 @@ export {
   pull,
   shift,
   unshift,
-  every,
-  some,
-  has,
+  splice,
   map,
   sort,
   filter,
   reduce,
-  length,
   concat,
-  splice,
-  toArray,
   unique,
   chunk,
   intersection,
+  XOR,
   difference,
+  differenceInsert,
 };
 
 // NOTE: Copied from ThunderDB, will need a rework
