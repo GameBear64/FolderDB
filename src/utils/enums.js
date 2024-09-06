@@ -13,4 +13,6 @@ export const CaseFormat = Object.freeze({
   KEBAB: Symbol('kebab'),
   FLAT: Symbol('flat'),
   TRAIN: Symbol('train'),
+  SLUG: Symbol('slug'),
+  REVERSE: Symbol('reverse'),
 });

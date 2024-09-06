@@ -200,7 +200,7 @@ function back(steps = 1) {
     throw new Error('Steps must be a positive number');
   }
 
-  const totalDepth = this.targetFile.replace(this.dbPath, '').split('/').length - 1 + this.pointers.length;
+  const totalDepth = this.targetFile.replace(this.dbPath, '').split(path.sep).length - 1 + this.pointers.length;
   if (steps > totalDepth) {
     throw new Error('Steps cannot be more than the available depth');
   }
@@ -216,11 +216,11 @@ function back(steps = 1) {
 
       case ValueType.FILE:
         this.valueType = ValueType.DIRECTORY;
-        this.pointers = path.dirname(this.targetFile.replace(this.dbPath, '')).split('/').slice(1);
+        this.pointers = path.dirname(this.targetFile.replace(this.dbPath, '')).split(path.sep).slice(1);
         this.targetFile = this.dbPath;
 
       case ValueType.DIRECTORY:
-        this.data = fs.readdirSync(`${this.targetFile}/${this.pointers.join('/')}`);
+        this.data = fs.readdirSync(`${this.targetFile}/${this.pointers.join(path.sep)}`);
         break;
     }
   }

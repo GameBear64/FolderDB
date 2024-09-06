@@ -3,7 +3,7 @@ function inc() {
   if (isNaN(value)) throw new Error('You can only increment numbers.');
 
   this._set(value + 1);
-  return this.data;
+  return this;
 }
 
 function dec() {
@@ -11,7 +11,7 @@ function dec() {
   if (isNaN(value)) throw new Error('You can only decrement numbers.');
 
   this._set(value - 1);
-  return this.data;
+  return this;
 }
 
 function add(number) {

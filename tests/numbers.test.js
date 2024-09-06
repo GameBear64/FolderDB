@@ -10,7 +10,7 @@ describe('[INC]', () => {
     const result = db.get('users.posts.first.likes').inc();
     let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
-    expect(data.likes).toEqual(result);
+    expect(data.likes).toEqual(result.data);
   });
 
   test('Error handling', () => {
@@ -25,7 +25,7 @@ describe('[DEC]', () => {
     const result = db.get('users.posts.first.likes').dec();
     let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
-    expect(data.likes).toEqual(result);
+    expect(data.likes).toEqual(result.data);
   });
 
   test('Error handling', () => {

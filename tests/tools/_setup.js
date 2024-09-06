@@ -1,7 +1,3 @@
-// create a few folders
-// copy template.json into "testing" folder
-// copy products and assets
-
 import path from 'path';
 import * as fs from 'fs';
 import { beforeAll, afterAll } from 'bun:test';
