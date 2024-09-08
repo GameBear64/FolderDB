@@ -71,4 +71,24 @@ function changeCase(format) {
   return this;
 }
 
-export { changeCase };
+function normalizeCase() {
+  let value = this.data;
+
+  if (typeof value !== 'string') {
+    throw new Error('You can only use normalizeCase on strings.');
+  }
+
+  this._set(
+    value
+      .replace(/([a-z])([A-Z])/g, '$1 $2') // Convert camelCase and PascalCase to separate words
+      .replace(/[_-]/g, ' ') // Replace underscores and hyphens with spaces
+      .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
+      .trim() // Remove leading and trailing spaces
+      .toLowerCase() // Convert to lowercase
+      .replace(/^\w/g, match => match.toUpperCase()) // Capitalize first letter of sentence
+  );
+
+  return this;
+}
+
+export { changeCase, normalizeCase };

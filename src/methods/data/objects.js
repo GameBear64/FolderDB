@@ -1,49 +1,37 @@
 function merge(object) {
-  let value = this.value();
+  let value = this.data;
   if (value !== Object(value) || object !== Object(object)) throw new Error('merge() can only be used on objects.');
 
-  this.set({ ...value, ...object });
+  this._set({ ...value, ...object });
   return this;
 }
 
-function invert() {
-  let value = this.value();
-  if (value !== Object(value)) throw new Error('invert() can only be used on objects.');
-
-  const inverted = Object.keys(value).reduce((acc, key) => {
-    acc[value[key]] = key;
-    return acc;
-  }, {});
-
-  this.set(inverted);
-  return this;
-}
-
-// Returns a new object with only the specified keys from the original object.
-function pick(...keys) {
-  let value = this.value();
+function pick(desiredFields) {
+  let value = this.data;
   if (value !== Object(value)) throw new Error('pick() can only be used on objects.');
+  if (!Array.isArray(desiredFields)) throw new Error('pick() needs an array with the desired fields');
 
-  const picked = keys.reduce((obj, key) => {
-    if (key in value) obj[key] = value[key];
-    return obj;
-  }, {});
+  this._set(Object.assign({}, ...desiredFields.map(field => ([field] in value ? { [field]: value[field] } : {}))));
 
-  this.set(picked);
   return this;
 }
 
-function omit(...keys) {
-  let value = this.value();
+function omit(fieldsToOmit) {
+  let value = this.data;
   if (value !== Object(value)) throw new Error('omit() can only be used on objects.');
+  if (!Array.isArray(fieldsToOmit)) throw new Error('omit() needs an array with the fields to omit');
 
-  const omitted = Object.keys(value).reduce((obj, key) => {
-    if (!keys.includes(key)) obj[key] = value[key];
-    return obj;
-  }, {});
+  this._set(
+    Object.assign(
+      {},
+      ...Object.keys(value)
+        .filter(key => !fieldsToOmit.includes(key))
+        .map(key => ({ [key]: value[key] }))
+    )
+  );
 
-  this.set(omitted);
   return this;
 }
 
-// NOTE: Some provided by GPT, check and test
+// NOTE: intersection, XOR, difference and differenceInsert in the arrays methods also handle objects
+export { merge, pick, omit };

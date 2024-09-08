@@ -134,7 +134,7 @@ function _traverseDir(currentDir) {
     const fullPath = path.join(currentDir, item);
 
     if (fs.lstatSync(fullPath).isDirectory()) {
-      result[item] = traverseDir(fullPath);
+      result[item] = _traverseDir(fullPath);
     } else if (item.endsWith('.json')) {
       try {
         const data = fs.readFileSync(fullPath, 'utf-8');

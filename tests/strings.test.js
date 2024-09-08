@@ -7,7 +7,7 @@ import { CaseFormat } from '../src/utils/enums.js';
 
 const db = new FolderDB({ dbPath: './test-db', mergeInstances: true });
 
-describe('[CHANGE_CASE]', () => {
+describe('[CHANGE CASE]', () => {
   test('Changing case to lower', () => {
     db.get('users.posts.first').set('title', 'Hello World');
 
@@ -115,5 +115,96 @@ describe('[CHANGE_CASE]', () => {
     expect(() => {
       db.get('users.posts.first.title').changeCase('UNSUPPORTED');
     }).toThrow('Unsupported case format.');
+  });
+});
+
+describe('[NORMALIZE CASE]', () => {
+  test('Normalizing snake_case string with punctuation', () => {
+    db.get('users.posts.first').set('text', 'hello_world!!');
+
+    db.get('users.posts.first.text').normalizeCase();
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.text).toEqual('Hello world!!');
+  });
+
+  test('Normalizing PascalCase string', () => {
+    db.get('users.posts.first').set('text', 'HelloWorld');
+
+    db.get('users.posts.first.text').normalizeCase();
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.text).toEqual('Hello world');
+  });
+
+  test('Normalizing camelCase string', () => {
+    db.get('users.posts.first').set('text', 'helloWorld');
+
+    db.get('users.posts.first.text').normalizeCase();
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.text).toEqual('Hello world');
+  });
+
+  test('Normalizing kebab-case string with punctuation', () => {
+    db.get('users.posts.first').set('text', 'hello-world');
+
+    db.get('users.posts.first.text').normalizeCase();
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.text).toEqual('Hello world');
+  });
+
+  test('Normalizing train-case string', () => {
+    db.get('users.posts.first').set('text', 'hello-world');
+
+    db.get('users.posts.first.text').normalizeCase();
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.text).toEqual('Hello world');
+  });
+
+  test('Normalizing slug case string', () => {
+    db.get('users.posts.first').set('text', 'hello-slug');
+
+    db.get('users.posts.first.text').normalizeCase();
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.text).toEqual('Hello slug');
+  });
+
+  test('Normalizing string with extra spaces and punctuation', () => {
+    db.get('users.posts.first').set('text', '  hello    world  ');
+
+    db.get('users.posts.first.text').normalizeCase();
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.text).toEqual('Hello world');
+  });
+
+  test('Normalizing string with multiple punctuations', () => {
+    db.get('users.posts.first').set('text', 'hello_world!!! & more text...');
+
+    db.get('users.posts.first.text').normalizeCase();
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.text).toEqual('Hello world!!! & more text...');
+  });
+
+  test('Normalizing empty string', () => {
+    db.get('users.posts.first').set('text', '');
+
+    db.get('users.posts.first.text').normalizeCase();
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.text).toEqual('');
+  });
+
+  test('Error handling when normalizeCase is called with a non-string', () => {
+    db.get('users.posts.first').set('text', ['tag1', 'tag2']);
+
+    expect(() => {
+      db.get('users.posts.first.text').normalizeCase();
+    }).toThrow('You can only use normalizeCase on strings.');
   });
 });

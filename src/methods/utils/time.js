@@ -1,13 +1,9 @@
 function setTimestamp(name) {
   const currentTimestamp = new Date().getTime();
 
-  if (name) {
-    this._set(name, currentTimestamp);
-  } else {
-    this._set(currentTimestamp);
-  }
+  name ? this._set(name, currentTimestamp) : this._set(currentTimestamp);
 
-  return this.data;
+  return this;
 }
 
 function setFutureTimestamp(name, ms) {
@@ -23,32 +19,30 @@ function setFutureTimestamp(name, ms) {
 
   const futureTimestamp = new Date().getTime() + (ms || name);
 
-  if (!!ms) {
-    this._set(name, futureTimestamp);
-  } else {
-    this._set(futureTimestamp);
-  }
+  !!ms ? this._set(name, futureTimestamp) : this._set(futureTimestamp);
 
-  return this.data;
+  return this;
 }
 
-function increaseTimestamp(milliseconds) {
+// add enums that correspond to milliseconds
+function advanceTime(milliseconds) {
   const value = Number(this.data);
   if (typeof value !== 'number' || typeof milliseconds !== 'number') {
     throw new Error('This method can only be used on numbers representing timestamps');
   }
 
   this._set(value + milliseconds);
-  return this.data;
+  return this;
 }
 
-function isPast() {
+function rewindTime(milliseconds) {
   const value = Number(this.data);
-  if (typeof value !== 'number') {
+  if (typeof value !== 'number' || typeof milliseconds !== 'number') {
     throw new Error('This method can only be used on numbers representing timestamps');
   }
 
-  return new Date().getTime() > value;
+  this._set(value - milliseconds);
+  return this;
 }
 
-export { setTimestamp, setFutureTimestamp, increaseTimestamp, isPast };
+export { setTimestamp, setFutureTimestamp, advanceTime, rewindTime };

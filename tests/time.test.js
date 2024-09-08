@@ -10,24 +10,24 @@ describe('[CREATE]', () => {
     let result = db.get('users.posts.first').setTimestamp('updated_at');
     let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
-    expect(data.updated_at).toEqual(result.updated_at);
+    expect(data.updated_at).toEqual(result.data.updated_at);
 
     result = db.get('users.posts.first.updated_at').setTimestamp();
     data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
-    expect(data.updated_at).toEqual(result);
+    expect(data.updated_at).toEqual(result.data);
   });
 
   test('Creating future timestamp', () => {
     let result = db.get('users.posts.first').setFutureTimestamp('will_update_at', 6000);
     let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
-    expect(data.will_update_at).toEqual(result.will_update_at);
+    expect(data.will_update_at).toEqual(result.data.will_update_at);
 
     result = db.get('users.posts.first.will_update_at').setFutureTimestamp(3000);
     data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
-    expect(data.will_update_at).toEqual(result);
+    expect(data.will_update_at).toEqual(result.data);
   });
 
   test('Error handling', () => {
@@ -38,22 +38,29 @@ describe('[CREATE]', () => {
 });
 
 describe('[UPDATE]', () => {
-  test('Updating timestamp', () => {
-    let result = db.get('users.posts.first.will_update_at').increaseTimestamp(2000);
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+  test('Advancing timestamp', () => {
+    let original = db.get('users.posts.first.will_update_at');
+    let result = db.get('users.posts.first.will_update_at').advanceTime(2000);
 
-    expect(data.will_update_at).toEqual(result);
+    expect(result.data).toEqual(original.data + 2000);
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.will_update_at).toEqual(result.data);
+  });
+
+  test('Rewinding timestamp', () => {
+    let original = db.get('users.posts.first.will_update_at');
+    let result = db.get('users.posts.first.will_update_at').rewindTime(5000);
+
+    expect(result.data).toEqual(original.data - 5000);
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.will_update_at).toEqual(result.data);
   });
 
   test('Error handling', () => {
     expect(() => {
-      db.get('users.posts.first.will_update_at').increaseTimestamp('aaa');
+      db.get('users.posts.first.will_update_at').advanceTime('aaa');
     }).toThrow('This method can only be used on numbers representing timestamps');
-  });
-});
-
-describe('[CHECK]', () => {
-  test('Checking if timestamp has passed', () => {
-    expect(db.get('users.posts.first.will_update_at').isPast()).toEqual(false);
   });
 });

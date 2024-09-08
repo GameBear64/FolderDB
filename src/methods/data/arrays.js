@@ -145,39 +145,124 @@ function chunk(size) {
   return this;
 }
 
-function intersection(array) {
-  let value = this.data;
-  if (!Array.isArray(value) || !Array.isArray(array)) throw new Error('intersection() can only be used on arrays.');
+function flattenMatrix() {
+  const array = this.data;
+  if (!Array.isArray(array)) throw new Error('Value must be an array.');
 
-  const intersected = value.filter(v => array.includes(v));
-  this._set(intersected);
+  function flatten(arr) {
+    return arr.reduce((acc, val) => {
+      if (Array.isArray(val)) {
+        acc.push(...flatten(val));
+      } else {
+        acc.push(val);
+      }
+      return acc;
+    }, []);
+  }
+
+  this.set(flatten(array));
   return this;
 }
 
-function XOR(array) {
-  let value = this.data;
-  if (!Array.isArray(value) || !Array.isArray(array)) throw new Error('XOR() can only be used on arrays.');
+function shuffleArray() {
+  const array = this.data;
+  if (!Array.isArray(array)) throw new Error('Value must be an array.');
 
-  const intersected = value.filter(v => !array.includes(v)).concat(array.filter(v => !value.includes(v)));
-  this._set(intersected);
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+  }
+
+  this.set(array);
   return this;
 }
 
-function difference(array) {
+function intersection(input) {
   let value = this.data;
-  if (!Array.isArray(value) || !Array.isArray(array)) throw new Error('difference() can only be used on arrays.');
 
-  const diff = value.filter(v => !array.includes(v));
-  this._set(diff);
+  if (Array.isArray(value) && Array.isArray(input)) {
+    const intersected = value.filter(v => input.includes(v));
+    this._set(intersected);
+  } else if (typeof value === 'object' && typeof input === 'object') {
+    const intersected = {};
+    for (const key in value) {
+      if (value.hasOwnProperty(key) && input.hasOwnProperty(key)) {
+        intersected[key] = value[key];
+      }
+    }
+    this._set(intersected);
+  } else {
+    throw new Error('intersection() can only be used on arrays or objects.');
+  }
+
   return this;
 }
 
-function differenceInsert(array) {
+function XOR(input) {
   let value = this.data;
-  if (!Array.isArray(value) || !Array.isArray(array)) throw new Error('differenceInsert() can only be used on arrays.');
 
-  const diff = array.filter(v => !value.includes(v));
-  this._set(diff);
+  if (Array.isArray(value) && Array.isArray(input)) {
+    const result = value.filter(v => !input.includes(v)).concat(input.filter(v => !value.includes(v)));
+    this._set(result);
+  } else if (typeof value === 'object' && typeof input === 'object') {
+    const result = {};
+    for (const key in value) {
+      if (value.hasOwnProperty(key) && !input.hasOwnProperty(key)) {
+        result[key] = value[key];
+      }
+    }
+    for (const key in input) {
+      if (input.hasOwnProperty(key) && !value.hasOwnProperty(key)) {
+        result[key] = input[key];
+      }
+    }
+    this._set(result);
+  } else {
+    throw new Error('XOR() can only be used on arrays or objects.');
+  }
+
+  return this;
+}
+
+function difference(input) {
+  let value = this.data;
+
+  if (Array.isArray(value) && Array.isArray(input)) {
+    const result = value.filter(v => !input.includes(v));
+    this._set(result);
+  } else if (typeof value === 'object' && typeof input === 'object') {
+    const result = {};
+    for (const key in value) {
+      if (value.hasOwnProperty(key) && !input.hasOwnProperty(key)) {
+        result[key] = value[key];
+      }
+    }
+    this._set(result);
+  } else {
+    throw new Error('difference() can only be used on arrays or objects.');
+  }
+
+  return this;
+}
+
+function differenceInsert(input) {
+  let value = this.data;
+
+  if (Array.isArray(value) && Array.isArray(input)) {
+    const result = input.filter(v => !value.includes(v));
+    this._set(result);
+  } else if (typeof value === 'object' && typeof input === 'object') {
+    const result = {};
+    for (const key in input) {
+      if (input.hasOwnProperty(key) && !value.hasOwnProperty(key)) {
+        result[key] = input[key];
+      }
+    }
+    this._set(result);
+  } else {
+    throw new Error('differenceInsert() can only be used on arrays or objects.');
+  }
+
   return this;
 }
 
@@ -195,11 +280,10 @@ export {
   concat,
   unique,
   chunk,
+  flattenMatrix,
+  shuffleArray,
   intersection,
   XOR,
   difference,
   differenceInsert,
 };
-
-// NOTE: Copied from ThunderDB, will need a rework
-// NOTE: Some provided by GPT, check and test

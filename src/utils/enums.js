@@ -16,3 +16,9 @@ export const CaseFormat = Object.freeze({
   SLUG: Symbol('slug'),
   REVERSE: Symbol('reverse'),
 });
+
+export const TimeFormat = Object.freeze({
+  SHORT: Symbol('short'),
+  MEDIUM: Symbol('medium'),
+  LONG: Symbol('long'),
+});

@@ -33,7 +33,7 @@ describe('[PUSH]', () => {
   });
 });
 
-describe('[PUSH_SET]', () => {
+describe('[PUSH SET]', () => {
   test('Pushing unique values to an array', () => {
     db.get('users.posts.first').set('tags', ['tag1']);
 
@@ -467,6 +467,74 @@ describe('[CHUNK]', () => {
   });
 });
 
+describe('[FLATTEN MATRIX]', () => {
+  test('Flattening a nested array', () => {
+    db.get('users.posts.first').set('matrix', [
+      [1, 2, [3, 4]],
+      [5, [6, 7]],
+    ]);
+
+    db.get('users.posts.first.matrix').flattenMatrix();
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.matrix).toEqual([1, 2, 3, 4, 5, 6, 7]);
+  });
+
+  test('Flattening an already flat array', () => {
+    db.get('users.posts.first').set('matrix', [1, 2, 3, 4, 5]);
+
+    db.get('users.posts.first.matrix').flattenMatrix();
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.matrix).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  test('Flattening an empty array', () => {
+    db.get('users.posts.first').set('matrix', []);
+
+    db.get('users.posts.first.matrix').flattenMatrix();
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.matrix).toEqual([]);
+  });
+
+  test('Error handling when flattenMatrix is called on a non-array', () => {
+    db.get('users.posts.first').set('matrix', 'not an array');
+
+    expect(() => {
+      db.get('users.posts.first.matrix').flattenMatrix();
+    }).toThrow('Value must be an array.');
+  });
+});
+
+describe('[SHUFFLE ARRAY]', () => {
+  test('Shuffling an array', () => {
+    db.get('users.posts.first').set('array', [1, 2, 3, 4, 5]);
+
+    db.get('users.posts.first.array').shuffleArray();
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.array.sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  test('Shuffling an empty array', () => {
+    db.get('users.posts.first').set('array', []);
+
+    db.get('users.posts.first.array').shuffleArray();
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.array).toEqual([]);
+  });
+
+  test('Error handling when shuffleArray is called on a non-array', () => {
+    db.get('users.posts.first').set('array', 'not an array');
+
+    expect(() => {
+      db.get('users.posts.first.array').shuffleArray();
+    }).toThrow('Value must be an array.');
+  });
+});
+
 describe('[INTERSECTION]', () => {
   test('Finding intersection of two arrays', () => {
     db.get('users.posts.first').set('tags', ['tag1', 'tag2', 'tag3']);
@@ -495,12 +563,21 @@ describe('[INTERSECTION]', () => {
     expect(data.tags).toEqual([]);
   });
 
+  test('Finding intersection with objects', () => {
+    db.get('users.posts.first').set('details', { a: 1, b: 2, c: 3 });
+
+    db.get('users.posts.first.details').intersection({ b: 2, c: 3, d: 4 });
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.details).toEqual({ b: 2, c: 3 });
+  });
+
   test('Error handling when intersection is called with a non-array', () => {
     db.get('users.posts.first').set('tags', ['tag1', 'tag2', 'tag3']);
 
     expect(() => {
       db.get('users.posts.first.tags').intersection('not an array');
-    }).toThrow('intersection() can only be used on arrays.');
+    }).toThrow('intersection() can only be used on arrays or objects.');
   });
 
   test('Error handling when intersection is called on a non-array', () => {
@@ -508,7 +585,7 @@ describe('[INTERSECTION]', () => {
 
     expect(() => {
       db.get('users.posts.first.title').intersection(['tag1', 'tag2']);
-    }).toThrow('intersection() can only be used on arrays.');
+    }).toThrow('intersection() can only be used on arrays or objects.');
   });
 });
 
@@ -532,12 +609,12 @@ describe('[XOR]', () => {
   });
 
   test('Finding XOR with no common elements', () => {
-    db.get('users.posts.first').set('tags', ['tag1', 'tag2']);
+    db.get('users.posts.first').set('tags', ['tag1', 'tag2', 'tag3']);
 
-    db.get('users.posts.first.tags').XOR(['tag3', 'tag4']);
+    db.get('users.posts.first.tags').XOR(['tag4', 'tag5']);
 
     let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
-    expect(data.tags).toEqual(['tag1', 'tag2', 'tag3', 'tag4']);
+    expect(data.tags).toEqual(['tag1', 'tag2', 'tag3', 'tag4', 'tag5']);
   });
 
   test('Error handling when XOR is called with a non-array', () => {
@@ -545,7 +622,7 @@ describe('[XOR]', () => {
 
     expect(() => {
       db.get('users.posts.first.tags').XOR('not an array');
-    }).toThrow('XOR() can only be used on arrays.');
+    }).toThrow('XOR() can only be used on arrays or objects.');
   });
 
   test('Error handling when XOR is called on a non-array', () => {
@@ -553,7 +630,16 @@ describe('[XOR]', () => {
 
     expect(() => {
       db.get('users.posts.first.title').XOR(['tag1', 'tag2']);
-    }).toThrow('XOR() can only be used on arrays.');
+    }).toThrow('XOR() can only be used on arrays or objects.');
+  });
+
+  test('XOR with objects', () => {
+    db.get('users.posts.first').set('details', { a: 1, b: 2 });
+
+    db.get('users.posts.first.details').XOR({ b: 2, c: 3 });
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.details).toEqual({ a: 1, c: 3 });
   });
 });
 
@@ -590,7 +676,7 @@ describe('[DIFFERENCE]', () => {
 
     expect(() => {
       db.get('users.posts.first.tags').difference('not an array');
-    }).toThrow('difference() can only be used on arrays.');
+    }).toThrow('difference() can only be used on arrays or objects.');
   });
 
   test('Error handling when difference is called on a non-array', () => {
@@ -598,11 +684,20 @@ describe('[DIFFERENCE]', () => {
 
     expect(() => {
       db.get('users.posts.first.title').difference(['tag1', 'tag2']);
-    }).toThrow('difference() can only be used on arrays.');
+    }).toThrow('difference() can only be used on arrays or objects.');
+  });
+
+  test('Difference with objects', () => {
+    db.get('users.posts.first').set('details', { a: 1, b: 2 });
+
+    db.get('users.posts.first.details').difference({ b: 2, c: 3 });
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.details).toEqual({ a: 1 });
   });
 });
 
-describe('[DIFFERENCE_INSERT]', () => {
+describe('[DIFFERENCE INSERT]', () => {
   test('Finding difference between arrays and inserting the result', () => {
     db.get('users.posts.first').set('tags', ['tag1', 'tag2']);
 
@@ -635,7 +730,7 @@ describe('[DIFFERENCE_INSERT]', () => {
 
     expect(() => {
       db.get('users.posts.first.tags').differenceInsert('not an array');
-    }).toThrow('differenceInsert() can only be used on arrays.');
+    }).toThrow('differenceInsert() can only be used on arrays or objects.');
   });
 
   test('Error handling when differenceInsert is called on a non-array', () => {
@@ -643,6 +738,15 @@ describe('[DIFFERENCE_INSERT]', () => {
 
     expect(() => {
       db.get('users.posts.first.title').differenceInsert(['tag1', 'tag2']);
-    }).toThrow('differenceInsert() can only be used on arrays.');
+    }).toThrow('differenceInsert() can only be used on arrays or objects.');
+  });
+
+  test('DifferenceInsert with objects', () => {
+    db.get('users.posts.first').set('details', { a: 1, b: 2 });
+
+    db.get('users.posts.first.details').differenceInsert({ b: 2, c: 3 });
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.details).toEqual({ c: 3 });
   });
 });

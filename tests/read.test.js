@@ -90,7 +90,35 @@ describe('[VALUES]', () => {
 });
 
 describe('[TREE]', () => {
-  // TODO
+  test('Retrieve directory structure', () => {
+    const usersDataFirst = fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8');
+    const usersGam = fs.readFileSync('./test-db/users/gam.json', 'UTF-8');
+    const products = fs.readFileSync('./test-db/products.json', 'UTF-8');
+
+    const result = db.getTree('');
+
+    expect(result.users.posts.first).toEqual(JSON.parse(usersDataFirst));
+    expect(result.users.gam).toEqual(JSON.parse(usersGam));
+    expect(result.products).toEqual(JSON.parse(products));
+  });
+
+  test('Error handling for invalid path', () => {
+    expect(() => {
+      db.get('dir').getTree('nonexistentFile');
+    }).toThrow('Error reading file');
+  });
+
+  test('Error handling for non-string value', () => {
+    expect(() => {
+      db.get('dir').getTree(123);
+    }).toThrow('Error reading file');
+  });
+
+  test('Error handling for path not in directory', () => {
+    expect(() => {
+      db.get('dir').getTree('file1/nonexistentFile');
+    }).toThrow('Error reading file');
+  });
 });
 
 describe('[BACK]', () => {
