@@ -114,7 +114,9 @@ function selectOmit(fieldsToOmit) {
 
 function isPast() {
   const value = Number(this.data);
-  if (typeof value !== 'number') {
+  console.log(value);
+
+  if (!value) {
     throw new Error('This method can only be used on numbers representing timestamps');
   }
 

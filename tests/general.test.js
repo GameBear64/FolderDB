@@ -139,6 +139,73 @@ describe('[SAMPLE]', () => {
   });
 });
 
+describe('[SELECT PICK]', () => {
+  beforeAll(() => {
+    db.get('users.posts.first').set('sidePost', {
+      title: 'Hello World',
+      content: 'This is a test post.',
+      author: 'John Doe',
+      password: 'secret',
+    });
+  });
+
+  test('Selecting desired fields', () => {
+    const result = db.get('users.posts.first.sidePost').selectPick(['title', 'author']);
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+
+    expect(result.data).toEqual({
+      title: data.sidePost.title,
+      author: data.sidePost.author,
+    });
+  });
+
+  test('Error handling for non-array argument', () => {
+    expect(() => {
+      db.get('users.posts.first.sidePost').selectPick('title');
+    }).toThrow('selectPick() needs an array with the desired fields');
+  });
+
+  test('Error handling for non-objects', () => {
+    expect(() => {
+      db.get('users.posts.first.sidePost.title').selectPick(['title']);
+    }).toThrow('selectPick() can only be used on objects.');
+  });
+});
+
+describe('[SELECT OMIT]', () => {
+  beforeAll(() => {
+    db.get('users.posts.first').set('sidePost', {
+      title: 'Hello World',
+      content: 'This is a test post.',
+      author: 'John Doe',
+      password: 'secret',
+    });
+  });
+
+  test('Omitting specified fields', () => {
+    const result = db.get('users.posts.first.sidePost').selectOmit(['password']);
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+
+    expect(result.data).toEqual({
+      title: data.sidePost.title,
+      content: data.sidePost.content,
+      author: data.sidePost.author,
+    });
+  });
+
+  test('Error handling for non-array argument', () => {
+    expect(() => {
+      db.get('users.posts.first.sidePost').selectOmit('password');
+    }).toThrow('selectOmit() needs an array with the fields to omit');
+  });
+
+  test('Error handling for non-objects', () => {
+    expect(() => {
+      db.get('users.posts.first.sidePost.title').selectOmit(['password']);
+    }).toThrow('selectOmit() can only be used on objects.');
+  });
+});
+
 describe('[CHECK]', () => {
   beforeAll(() => {
     db.get('users.posts.first').setTimestamp('will_update_at');
@@ -150,6 +217,12 @@ describe('[CHECK]', () => {
 
     db.get('users.posts.first.will_update_at').setTimestamp().advanceTime(10000);
     expect(db.get('users.posts.first.will_update_at').isPast()).toEqual(false);
+  });
+
+  test('Error handling for invalid number', () => {
+    expect(() => {
+      db.get('users.posts.first.title').isPast();
+    }).toThrow('This method can only be used on numbers representing timestamps');
   });
 });
 

@@ -44,8 +44,6 @@ function _getFile() {
 
     if (fileDetails.ext == '.json') {
       this.data = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
-    } else {
-      this.data = { buffer: fs.readFileSync(this.targetFile), name: fileDetails.name, ext: fileDetails.ext };
     }
 
     this.valueType = ValueType.FILE;
@@ -80,10 +78,6 @@ function _getFile() {
  * @throws {Error} - Throws an error if a path in the pointers does not exist in the data.
  */
 function _fileNavigator() {
-  if (!this.pointers || !this.data) {
-    throw new Error('Pointers or data not properly initialized.');
-  }
-
   if (this.pointers.length > 0) this.valueType = ValueType.VALUE;
   // we stop removing pointers to be able to navigate back here
 
@@ -110,16 +104,12 @@ function get(value) {
 
   const clone = this._clone();
 
-  clone.pointers = value.split('.').filter(p => p !== '');
+  clone.pointers = [...clone.pointers, ...value.split('.').filter(p => p !== '')];
 
-  if (clone.valueType == ValueType.DIRECTORY) {
-    const { doNext } = clone.__dirNavigator();
+  const { doNext } = clone.__dirNavigator();
 
-    if (doNext) {
-      clone.__getFile();
-      clone.__fileNavigator();
-    }
-  } else {
+  if (doNext) {
+    clone.__getFile();
     clone.__fileNavigator();
   }
 
@@ -136,12 +126,8 @@ function _traverseDir(currentDir) {
     if (fs.lstatSync(fullPath).isDirectory()) {
       result[item] = _traverseDir(fullPath);
     } else if (item.endsWith('.json')) {
-      try {
-        const data = fs.readFileSync(fullPath, 'utf-8');
-        result[item.slice(0, -5)] = JSON.parse(data);
-      } catch (error) {
-        console.error(`Failed to parse JSON file: ${fullPath}`, error);
-      }
+      const data = fs.readFileSync(fullPath, 'utf-8');
+      result[item.slice(0, -5)] = JSON.parse(data);
     } else {
       result[item] = null; // Dead end
     }

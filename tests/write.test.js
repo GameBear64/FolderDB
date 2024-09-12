@@ -7,8 +7,7 @@ const db = new FolderDB({ dbPath: './test-db', mergeInstances: true });
 
 describe('[SET]', () => {
   test('Writing with key and value', () => {
-    const reference = db.get('users.posts.first.author');
-    reference.set('id', 'some_random_id');
+    const reference = db.get('users.posts.first.author').set('id', 'some_random_id');
     let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
     expect(data.author.id).toEqual('some_random_id');
@@ -16,8 +15,7 @@ describe('[SET]', () => {
   });
 
   test('Writing without key', () => {
-    const reference = db.get('users.posts.first.author.id');
-    reference.set('other_random_id');
+    const reference = db.get('users.posts.first.author.id').set('other_random_id');
 
     let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
@@ -26,8 +24,7 @@ describe('[SET]', () => {
   });
 
   test('Creating a matrix', () => {
-    const reference = db.get('users.posts.first');
-    reference.set('matrix', [0, 1, [2, 3]]);
+    const reference = db.get('users.posts.first').set('matrix', [0, 1, [2, 3]]);
 
     let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.matrix).toEqual([0, 1, [2, 3]]);
@@ -35,8 +32,7 @@ describe('[SET]', () => {
   });
 
   test('Ensures correct update of indices in a matrix', () => {
-    const reference = db.get('users.posts.first.matrix');
-    reference.set('2.1', 5);
+    const reference = db.get('users.posts.first.matrix').set('2.1', 5);
 
     let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
@@ -45,8 +41,7 @@ describe('[SET]', () => {
   });
 
   test('Updates the value when setting an object', () => {
-    const reference = db.get('users.posts.first');
-    reference.set('obj', {});
+    const reference = db.get('users.posts.first').set('obj', {});
 
     let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.obj).toEqual({});
@@ -54,8 +49,7 @@ describe('[SET]', () => {
   });
 
   test('Writing with many keys', () => {
-    const reference = db.get('users.posts.first');
-    reference.set('test2.deep.nest', 'nested new value');
+    const reference = db.get('users.posts.first').set('test2.deep.nest', 'nested new value');
 
     let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
@@ -76,6 +70,23 @@ describe('[SET]', () => {
 
     expect(data.testKey).toEqual('some other value');
     expect(instance.data.testKey).toEqual('some other value');
+  });
+
+  test('Write after multiple gets', () => {
+    let instance = db.get('users.posts.first').set('testKey', { a: { b: { c: 'nest' } } });
+
+    instance.get('testKey.a.b.c').set('deep nest');
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+
+    let final = db.get('users.posts.first.testKey.a.b.c').data;
+    expect(final).toEqual('deep nest');
+    expect(data.testKey.a.b.c).toEqual(final);
+  });
+
+  test('Error handling', () => {
+    expect(() => {
+      db.get('users.posts').set('obj', {});
+    }).toThrow('Only values can be set');
   });
 });
 
@@ -111,6 +122,23 @@ describe('[RENAME]', () => {
 
     expect(!!fs.existsSync('./test-db/users/renamedFile')).toEqual(true);
   });
+
+  test('Renaming a folder', () => {
+    db.get('users').createFolder('renameFolder');
+    db.get('users.renameFolder').rename('renamedFolder');
+
+    expect(!!fs.existsSync('./test-db/users/renamedFolder')).toEqual(true);
+  });
+
+  test('Renaming a key in an object', () => {
+    let reference = db.get('users.posts.first.author').set('something_nice', 'some_random_id');
+    reference = reference.get('something_nice').rename('something');
+
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+
+    expect(data.author.something).toEqual('some_random_id');
+    expect(reference.data.something).toEqual('some_random_id');
+  });
 });
 
 describe('[REMOVE]', () => {
@@ -127,5 +155,19 @@ describe('[REMOVE]', () => {
 
     db.get('users.new1').remove();
     expect(!!fs.existsSync('./test-db/users/new1')).toEqual(false);
+  });
+
+  test('Removing a key in an object', () => {
+    let reference = db.get('users.posts.first').set('veryNested', { a: { b: 'im nested' } });
+    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+
+    expect(reference.data.veryNested.a.b).toEqual('im nested');
+    expect(reference.data.veryNested.a.b).toEqual(data.veryNested.a.b);
+
+    reference = reference.get('veryNested.a').remove();
+
+    expect(() => {
+      db.get('users.posts.first.veryNested.a.b');
+    }).toThrow('Path not found');
   });
 });

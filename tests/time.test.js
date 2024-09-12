@@ -30,10 +30,16 @@ describe('[CREATE]', () => {
     expect(data.will_update_at).toEqual(result.data);
   });
 
-  test('Error handling', () => {
+  test('Error handling wrong argument', () => {
     expect(() => {
       db.get('users.posts.first.will_update_at').setFutureTimestamp('aaa');
     }).toThrow('This method can only be used with numbers representing timestamps');
+  });
+
+  test('Error handling multiple wrong arguments', () => {
+    expect(() => {
+      db.get('users.posts.first.will_update_at').setFutureTimestamp('aaa', 'bbb');
+    }).toThrow('The first argument must be a string (for name) or a number (for milliseconds)');
   });
 });
 

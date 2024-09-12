@@ -12,7 +12,7 @@ function setFutureTimestamp(name, ms) {
       throw new Error('This method can only be used with numbers representing timestamps');
     }
   } else {
-    if (typeof name !== 'string' && typeof ms !== 'number') {
+    if (typeof name !== 'string' || typeof ms !== 'number') {
       throw new Error('The first argument must be a string (for name) or a number (for milliseconds)');
     }
   }

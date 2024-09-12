@@ -57,6 +57,14 @@ describe('[FILES]', () => {
     expect(result.targetFile).toMatch(directory);
   });
 
+  test('Reading an image', () => {
+    const result = db.get('assets.airplane');
+    const directory = path.resolve('test-db/assets/airplane.jpg');
+    const data = fs.readFileSync(directory);
+
+    expect(result.data).toEqual({ buffer: data, name: 'airplane', ext: '.jpg' });
+  });
+
   test('Wrong file', () => {
     expect(() => {
       db.get('users.posts.nothing');
@@ -102,22 +110,30 @@ describe('[TREE]', () => {
     expect(result.products).toEqual(JSON.parse(products));
   });
 
-  test('Error handling for invalid path', () => {
-    expect(() => {
-      db.get('dir').getTree('nonexistentFile');
-    }).toThrow('Error reading file');
+  test('Retrieve partial file structure', () => {
+    const usersDataFirst = fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8');
+
+    const result = db.getTree('users.posts.first.links');
+
+    expect(result).toEqual(JSON.parse(usersDataFirst).links);
   });
 
   test('Error handling for non-string value', () => {
     expect(() => {
-      db.get('dir').getTree(123);
-    }).toThrow('Error reading file');
+      db.get('').getTree(123);
+    }).toThrow('Value must be string');
+  });
+
+  test('Error handling for invalid path', () => {
+    expect(() => {
+      db.get('').getTree('nonexistentFile');
+    }).toThrow('No such file or directory');
   });
 
   test('Error handling for path not in directory', () => {
     expect(() => {
-      db.get('dir').getTree('file1/nonexistentFile');
-    }).toThrow('Error reading file');
+      db.get('').getTree('file1.nonexistentFile');
+    }).toThrow('No such file or directory');
   });
 });
 

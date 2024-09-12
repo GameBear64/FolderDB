@@ -1,2 +1,3 @@
 [test]
 preload = ["./tests/tools/_setup.js"]
+coverage = true

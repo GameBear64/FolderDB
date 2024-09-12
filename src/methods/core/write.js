@@ -54,28 +54,33 @@ function set(_key, _value) {
   return this;
 }
 
-async function rename(newName) {
+function rename(newName) {
   switch (this.valueType) {
     case ValueType.DIRECTORY:
     case ValueType.FILE:
       fs.renameSync(this.targetFile, path.resolve(path.parse(this.targetFile).dir, newName));
       break;
     case ValueType.VALUE:
-      let target = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
-      const oldKey = this.pointers[this.pointers.length - 1];
+      const file = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
+      const oldKey = this.pointers.pop();
+      const target = file[this.pointers];
 
-      if (target[oldKey] !== undefined) {
+      if (target.hasOwnProperty(oldKey)) {
         target[newName] = target[oldKey];
         delete target[oldKey];
-        fs.writeFileSync(this.targetFile, JSON.stringify(target, null, 2));
+
+        this.data = target;
+        this.pointers.push(newName);
+        fs.writeFileSync(this.targetFile, JSON.stringify(file, null, 2));
       }
+
       break;
   }
 
   return this;
 }
 
-async function remove() {
+function remove() {
   switch (this.valueType) {
     case ValueType.DIRECTORY:
       fs.rmdirSync(this.targetFile, { recursive: true });
@@ -84,13 +89,15 @@ async function remove() {
       fs.unlinkSync(this.targetFile);
       break;
     case ValueType.VALUE:
-      let target = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
+      const file = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
+      const keyToRemove = this.pointers.pop();
+      const target = file[this.pointers];
 
-      const keyToRemove = this.pointers[this.pointers.length - 1];
-
-      if (target[keyToRemove] !== undefined) {
+      if (target.hasOwnProperty(keyToRemove)) {
         delete target[keyToRemove];
-        fs.writeFileSync(this.targetFile, JSON.stringify(target, null, 2));
+
+        this.data = target;
+        fs.writeFileSync(this.targetFile, JSON.stringify(file, null, 2));
       }
       break;
   }
