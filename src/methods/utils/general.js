@@ -3,6 +3,12 @@ import { ValueType, TimeFormat } from '../../utils/enums';
 // NOTE: General methods don't edit the value
 
 // ========= Utility ===========
+/**
+ * Populates a value from a specified location in the data tree.
+ * @param {string} location - Dot-separated path to the location in the data tree.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the value type is a directory or if the path is not found.
+ */
 function populate(location) {
   if (this.valueType == ValueType.DIRECTORY) {
     throw new Error('You can only populate at the value level.');
@@ -30,12 +36,22 @@ function populate(location) {
   return this;
 }
 
+/**
+ * Dumps the current data to the console.
+ * @returns {Object} The current object for chaining.
+ */
 function dump() {
   console.log(this.data);
 
   return this;
 }
 
+/**
+ * Applies a callback function to the current data without modifying it.
+ * @param {Function} callback - A function to be executed on the data.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the callback is not a function.
+ */
 function tap(callback) {
   if (typeof callback !== 'function') throw new Error('You must provide a function to tap().');
   callback(this.data);
@@ -43,6 +59,11 @@ function tap(callback) {
 }
 
 // ========== Array ============
+/**
+ * Calculates the average of an array of numbers.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the data is not a non-empty array of numbers.
+ */
 function average() {
   const numbers = this.data;
 
@@ -58,6 +79,12 @@ function average() {
   return this;
 }
 
+/**
+ * Selects random elements from an array.
+ * @param {number} [count=1] - The number of elements to select.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the data is not an array, the count is not a positive number, or if the count exceeds the array length.
+ */
 function sample(count = 1) {
   const array = this.data;
 
@@ -84,7 +111,12 @@ function sample(count = 1) {
 }
 
 // =============== OBJECTS ============
-
+/**
+ * Picks specific fields from an object.
+ * @param {string[]} desiredFields - An array of fields to pick from the object.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the data is not an object or if the desiredFields is not an array.
+ */
 function selectPick(desiredFields) {
   let value = this.data;
   if (value !== Object(value)) throw new Error('selectPick() can only be used on objects.');
@@ -95,6 +127,12 @@ function selectPick(desiredFields) {
   return this;
 }
 
+/**
+ * Omits specific fields from an object.
+ * @param {string[]} fieldsToOmit - An array of fields to omit from the object.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the data is not an object or if fieldsToOmit is not an array.
+ */
 function selectOmit(fieldsToOmit) {
   let value = this.data;
   if (value !== Object(value)) throw new Error('selectOmit() can only be used on objects.');
@@ -111,7 +149,11 @@ function selectOmit(fieldsToOmit) {
 }
 
 // ======= TIME ==========
-
+/**
+ * Checks if the current timestamp is in the past.
+ * @returns {boolean} True if the timestamp is in the past, otherwise false.
+ * @throws {Error} Throws an error if the data is not a number representing a timestamp.
+ */
 function isPast() {
   const value = Number(this.data);
   console.log(value);
@@ -123,6 +165,12 @@ function isPast() {
   return new Date().getTime() > value;
 }
 
+/**
+ * Formats a timestamp into a specified format.
+ * @param {TimeFormat} [format=TimeFormat.MEDIUM] - The format to apply to the timestamp.
+ * @returns {string} The formatted date string.
+ * @throws {Error} Throws an error if the data is not a valid timestamp or if the format is invalid.
+ */
 function formatTimestamp(format = TimeFormat.MEDIUM) {
   const value = Number(this.data);
   if (isNaN(value)) throw new Error('Value must be a valid timestamp.');
@@ -170,6 +218,11 @@ function formatTimestamp(format = TimeFormat.MEDIUM) {
   return formattedDate;
 }
 
+/**
+ * Formats a timestamp into a relative time string.
+ * @returns {string} The formatted relative time string.
+ * @throws {Error} Throws an error if the data is not a valid timestamp.
+ */
 function formatRelativeTime() {
   const value = Number(this.data);
   if (isNaN(value)) throw new Error('Value must be a valid timestamp.');

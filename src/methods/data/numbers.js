@@ -1,3 +1,8 @@
+/**
+ * Increases the target property by one.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the target property is not a number.
+ */
 function inc() {
   const value = Number(this.data);
   if (isNaN(value)) throw new Error('You can only increment numbers.');
@@ -6,6 +11,11 @@ function inc() {
   return this;
 }
 
+/**
+ * Decreases the target property by one.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the target property is not a number.
+ */
 function dec() {
   const value = Number(this.data);
   if (isNaN(value)) throw new Error('You can only decrement numbers.');
@@ -14,6 +24,12 @@ function dec() {
   return this;
 }
 
+/**
+ * Adds a given number to the target property.
+ * @param {number} number The number to add.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the target property or parameter is not a number.
+ */
 function add(number) {
   const value = Number(this.data);
   if (isNaN(number)) throw new Error('Values can only be numbers.');
@@ -23,6 +39,12 @@ function add(number) {
   return this;
 }
 
+/**
+ * Subtracts a given number from the target property.
+ * @param {number} number The number to subtract.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the target property or parameter is not a number.
+ */
 function sub(number) {
   const value = Number(this.data);
   if (isNaN(number)) throw new Error('Values can only be numbers.');
@@ -32,6 +54,12 @@ function sub(number) {
   return this;
 }
 
+/**
+ * Increases the target property by a given percentage.
+ * @param {number} percentage The percentage to add.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the target property or parameter is not a number.
+ */
 function addPercentage(percentage) {
   const value = Number(this.data);
   if (isNaN(percentage)) throw new Error('Values can only be numbers.');
@@ -41,6 +69,12 @@ function addPercentage(percentage) {
   return this;
 }
 
+/**
+ * Decreases the target property by a given percentage.
+ * @param {number} percentage The percentage to subtract.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the target property or parameter is not a number.
+ */
 function subPercentage(percentage) {
   const value = Number(this.data);
   if (isNaN(percentage)) throw new Error('Values can only be numbers.');
@@ -50,6 +84,13 @@ function subPercentage(percentage) {
   return this;
 }
 
+/**
+ * Sets the target property to a random number between the given minimum and maximum values.
+ * @param {number} max The maximum value for the random number.
+ * @param {number} [min=0] The minimum value for the random number.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the parameters are not numbers.
+ */
 function random(max, min = 0) {
   if (isNaN(min) || isNaN(max)) throw new Error('You can only use random() with numbers.');
 
@@ -58,6 +99,13 @@ function random(max, min = 0) {
   return this;
 }
 
+/**
+ * Adds a random number between the given minimum and maximum values to the target property.
+ * @param {number} max The maximum value for the random number.
+ * @param {number} [min=0] The minimum value for the random number.
+ * @returns {number} The generated random number.
+ * @throws {Error} Throws an error if the target property or parameters are not numbers.
+ */
 function addRandom(max, min = 0) {
   const value = Number(this.data);
   if (isNaN(max) && isNaN(min)) throw new Error('Values can only be numbers.');
@@ -68,6 +116,13 @@ function addRandom(max, min = 0) {
   return randomized;
 }
 
+/**
+ * Subtracts a random number between the given minimum and maximum values from the target property.
+ * @param {number} max The maximum value for the random number.
+ * @param {number} [min=0] The minimum value for the random number.
+ * @returns {number} The generated random number.
+ * @throws {Error} Throws an error if the target property or parameters are not numbers.
+ */
 function subRandom(max, min = 0) {
   const value = Number(this.data);
   if (isNaN(max) && isNaN(min)) throw new Error('Values can only be numbers.');
@@ -78,6 +133,13 @@ function subRandom(max, min = 0) {
   return randomized;
 }
 
+/**
+ * Clamps the target property value between a minimum and maximum range.
+ * @param {number} min The minimum value.
+ * @param {number} max The maximum value.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the target property, min, or max are not numbers, or if min is greater than max.
+ */
 function clamp(min, max) {
   const value = Number(this.data);
   if (isNaN(value)) throw new Error('Value must be a number.');
@@ -88,6 +150,12 @@ function clamp(min, max) {
   return this;
 }
 
+/**
+ * Rounds the target property's floating-point number to a specified number of digits.
+ * @param {number} digits The number of digits to round to.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the target property is not a number or if digits is not a non-negative integer.
+ */
 function roundFloat(digits) {
   const value = Number(this.data);
   if (isNaN(value)) throw new Error('Value must be a number.');

@@ -1,3 +1,10 @@
+/**
+ * Adds one or more values to the end of the array.
+ *
+ * @param {...any} value - The values to add to the array.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target is not an array.
+ */
 function push(...value) {
   let list = this.data;
   if (!Array.isArray(list)) throw new Error('You can only push to arrays.');
@@ -8,6 +15,13 @@ function push(...value) {
   return this;
 }
 
+/**
+ * Adds unique values to the array (only values not already present).
+ *
+ * @param {...any} value - The values to add to the array.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target is not an array.
+ */
 function pushSet(...value) {
   let list = this.data;
   if (!Array.isArray(list)) throw new Error('You can only push to arrays.');
@@ -25,6 +39,14 @@ function pushSet(...value) {
   return this;
 }
 
+/**
+ * Removes and returns the last value from the array.
+ *
+ * @param {Object} [options] - The options object.
+ * @param {boolean} [options.result=false] - If true, returns the removed value.
+ * @returns {any|Object} The removed value or the current instance for chaining.
+ * @throws {Error} If the target is not an array.
+ */
 function pull({ result = false } = {}) {
   let list = this.data;
   if (!Array.isArray(list)) throw new Error('You can only pull from arrays.');
@@ -36,6 +58,14 @@ function pull({ result = false } = {}) {
   return this;
 }
 
+/**
+ * Removes and returns the first value from the array.
+ *
+ * @param {Object} [options] - The options object.
+ * @param {boolean} [options.result=false] - If true, returns the removed value.
+ * @returns {any|Object} The removed value or the current instance for chaining.
+ * @throws {Error} If the target is not an array.
+ */
 function shift({ result = false } = {}) {
   let list = this.data;
   if (!Array.isArray(list)) throw new Error('You can only shift arrays.');
@@ -47,6 +77,13 @@ function shift({ result = false } = {}) {
   return this;
 }
 
+/**
+ * Adds one or more values to the start of the array.
+ *
+ * @param {...any} value - The values to add to the array.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target is not an array.
+ */
 function unshift(...value) {
   let list = this.data;
   if (!Array.isArray(list)) throw new Error('You can only unshift arrays.');
@@ -57,16 +94,33 @@ function unshift(...value) {
   return this;
 }
 
+/**
+ * Changes the content of an array by removing or replacing existing elements and/or adding new elements.
+ *
+ * @param {number} start - The index to start changing the array.
+ * @param {number} deleteCount - The number of elements to remove.
+ * @param {...any} [items] - The elements to add to the array.
+ * @returns {Array} The removed elements.
+ * @throws {Error} If the target is not an array.
+ */
 function splice(start, deleteCount, ...items) {
   let list = this.data;
   if (!Array.isArray(list)) throw new Error('You can only use .splice() on arrays.');
 
   const removedItems = list.splice(start, deleteCount, ...items);
   this._set(list);
+
   return removedItems;
 }
 
-function map(func, result = false) {
+/**
+ * Creates a new array populated with the results of calling a provided function on every element.
+ *
+ * @param {function} func - The function to execute on each element.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target is not an array or func is not a function.
+ */
+function map(func) {
   let list = this.data;
   if (typeof func !== 'function') throw new Error('You can only pass functions to .map().');
   if (!Array.isArray(list)) throw new Error('You can only map arrays.');
@@ -74,11 +128,17 @@ function map(func, result = false) {
   list = list.map(func);
   this._set(list);
 
-  if (result) return list;
   return this;
 }
 
-function sort(func, result = false) {
+/**
+ * Sorts the elements of the array in place.
+ *
+ * @param {function} [func] - The comparison function to use for sorting.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target is not an array or func is not a function.
+ */
+function sort(func) {
   let list = this.data;
   if (typeof func !== 'function' && func !== undefined)
     throw new Error('You can only pass functions or nothing to .sort().');
@@ -87,11 +147,17 @@ function sort(func, result = false) {
   list.sort(func);
   this._set(list);
 
-  if (result) return list;
   return this;
 }
 
-function filter(func, result = false) {
+/**
+ * Creates a new array with all elements that pass the test implemented by the provided function.
+ *
+ * @param {function} func - The function to test each element.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target is not an array or func is not a function.
+ */
+function filter(func) {
   let list = this.data;
   if (typeof func !== 'function') throw new Error('You can only pass functions to .filter().');
   if (!Array.isArray(list)) throw new Error('You can only filter arrays.');
@@ -99,11 +165,17 @@ function filter(func, result = false) {
   list = list.filter(func);
   this._set(list);
 
-  if (result) return list;
   return this;
 }
 
-function reduce(func, result = false) {
+/**
+ * Applies a function against an accumulator and each element in the array to reduce it to a single value.
+ *
+ * @param {function} func - The function to execute on each element.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target is not an array or func is not a function.
+ */
+function reduce(func) {
   let list = this.data;
   if (typeof func !== 'function') throw new Error('You can only pass functions to .reduce().');
   if (!Array.isArray(list)) throw new Error('You can only reduce arrays.');
@@ -111,19 +183,32 @@ function reduce(func, result = false) {
   let reducedValue = list.reduce(func);
   this._set(reducedValue);
 
-  if (result) return reducedValue;
   return this;
 }
 
+/**
+ * Concatenates arrays and returns a new array.
+ *
+ * @param {...Array} arrays - The arrays to concatenate.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target is not an array.
+ */
 function concat(...arrays) {
   let list = this.data;
   if (!Array.isArray(list)) throw new Error('You can only use .concat() on arrays.');
 
   const result = list.concat(...arrays);
   this._set(result);
+
   return this;
 }
 
+/**
+ * Removes duplicate values from an array.
+ *
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target is not an array.
+ */
 function unique() {
   let value = this.data;
   if (!Array.isArray(value)) throw new Error('unique() can only be used on arrays.');
@@ -132,6 +217,13 @@ function unique() {
   return this;
 }
 
+/**
+ * Splits an array into chunks of the specified size.
+ *
+ * @param {number} size - The size of each chunk.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target is not an array.
+ */
 function chunk(size) {
   let value = this.data;
   if (!Array.isArray(value)) throw new Error('chunk() can only be used on arrays.');
@@ -145,6 +237,12 @@ function chunk(size) {
   return this;
 }
 
+/**
+ * Flattens a nested array into a single-level array.
+ *
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target is not an array.
+ */
 function flattenMatrix() {
   const array = this.data;
   if (!Array.isArray(array)) throw new Error('Value must be an array.');
@@ -164,6 +262,12 @@ function flattenMatrix() {
   return this;
 }
 
+/**
+ * Shuffles the array in place using the Fisher-Yates algorithm.
+ *
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target is not an array.
+ */
 function shuffleArray() {
   const array = this.data;
   if (!Array.isArray(array)) throw new Error('Value must be an array.');
@@ -177,6 +281,13 @@ function shuffleArray() {
   return this;
 }
 
+/**
+ * Returns the intersection of two arrays or objects.
+ *
+ * @param {Array|Object} input - The input array or object to compare.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target or input is not an array or object.
+ */
 function intersection(input) {
   let value = this.data;
 
@@ -198,6 +309,13 @@ function intersection(input) {
   return this;
 }
 
+/**
+ * Returns the symmetric difference (XOR) of two arrays or objects.
+ *
+ * @param {Array|Object} input - The input array or object to compare.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target or input is not an array or object.
+ */
 function XOR(input) {
   let value = this.data;
 
@@ -224,6 +342,13 @@ function XOR(input) {
   return this;
 }
 
+/**
+ * Returns the difference between two arrays or objects (elements present in the target but not in the input).
+ *
+ * @param {Array|Object} input - The input array or object to compare.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target or input is not an array or object.
+ */
 function difference(input) {
   let value = this.data;
 
@@ -245,6 +370,13 @@ function difference(input) {
   return this;
 }
 
+/**
+ * Returns the difference between two arrays or objects (elements present in the input but not in the target).
+ *
+ * @param {Array|Object} input - The input array or object to compare.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target or input is not an array or object.
+ */
 function differenceInsert(input) {
   let value = this.data;
 

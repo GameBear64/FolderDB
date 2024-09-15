@@ -1,3 +1,10 @@
+/**
+ * Sets the current timestamp.
+ *
+ * @param {string} [name] - The optional name to assign the timestamp to.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the target is not set correctly.
+ */
 function setTimestamp(name) {
   const currentTimestamp = new Date().getTime();
 
@@ -6,6 +13,14 @@ function setTimestamp(name) {
   return this;
 }
 
+/**
+ * Sets a future timestamp by adding a number of milliseconds to the current time.
+ *
+ * @param {string|number} name - The name for the timestamp or the number of milliseconds.
+ * @param {number} [ms] - The number of milliseconds to add. Required if `name` is a string.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the input types are incorrect.
+ */
 function setFutureTimestamp(name, ms) {
   if (!ms) {
     if (typeof name !== 'number') {
@@ -24,7 +39,13 @@ function setFutureTimestamp(name, ms) {
   return this;
 }
 
-// add enums that correspond to milliseconds
+/**
+ * Advances the current timestamp by a specified number of milliseconds.
+ *
+ * @param {number} milliseconds - The number of milliseconds to advance the timestamp.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the current data or milliseconds are not numbers.
+ */
 function advanceTime(milliseconds) {
   const value = Number(this.data);
   if (typeof value !== 'number' || typeof milliseconds !== 'number') {
@@ -35,6 +56,13 @@ function advanceTime(milliseconds) {
   return this;
 }
 
+/**
+ * Rewinds the current timestamp by a specified number of milliseconds.
+ *
+ * @param {number} milliseconds - The number of milliseconds to rewind the timestamp.
+ * @returns {Object} The current instance for chaining.
+ * @throws {Error} If the current data or milliseconds are not numbers.
+ */
 function rewindTime(milliseconds) {
   const value = Number(this.data);
   if (typeof value !== 'number' || typeof milliseconds !== 'number') {

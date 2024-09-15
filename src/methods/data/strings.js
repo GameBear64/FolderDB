@@ -1,5 +1,13 @@
 import { CaseFormat } from '../../utils/enums';
 
+/**
+ * Changes the case format of the target string property.
+ *
+ * @param {CaseFormat} format - The desired case format to change the string to.
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the target property is not a string.
+ * @throws {Error} Throws an error if the provided format is not supported.
+ */
 function changeCase(format) {
   let value = this.data;
 
@@ -71,6 +79,13 @@ function changeCase(format) {
   return this;
 }
 
+/**
+ * Normalizes the case of the target string by converting it to a sentence case format.
+ * Handles camelCase, PascalCase, underscores, hyphens, and multiple spaces.
+ *
+ * @returns {Object} The current object for chaining.
+ * @throws {Error} Throws an error if the target property is not a string.
+ */
 function normalizeCase() {
   let value = this.data;
 
