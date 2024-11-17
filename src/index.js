@@ -1,8 +1,8 @@
-import TaskQueue from './utils/queue';
-import methods from './methods/all';
+import TaskQueue from './utils/queue.js';
+import methods from './methods/all.js';
 import path from 'path';
 
-import * as e from './utils/enums';
+import * as e from './utils/enums.js';
 
 class FolderDB {
   /**

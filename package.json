@@ -1,0 +1,29 @@
+{
+  "name": "folderdb",
+  "version": "1.0.0",
+  "description": "Simple json based database solution.",
+  "type": "module",
+  "main": "src/index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "bun test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GameBear64/FolderDB.git"
+  },
+  "keywords": [
+    "database",
+    "json",
+    "simple"
+  ],
+  "author": "GamBar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GameBear64/FolderDB/issues"
+  },
+  "homepage": "https://github.com/GameBear64/FolderDB#readme"
+}

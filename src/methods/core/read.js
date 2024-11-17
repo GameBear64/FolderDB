@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import path from 'path';
 
-import { ValueType } from '../../utils/enums';
+import { ValueType } from '../../utils/enums.js';
 
 /**
  * Navigates through a directory structure based on the current pointers.

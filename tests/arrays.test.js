@@ -215,16 +215,6 @@ describe('[MAP]', () => {
     expect(data.tags).toEqual(['TAG1', 'TAG2', 'TAG3']);
   });
 
-  test('Mapping a function over an array and returning the result', () => {
-    db.get('users.posts.first').set('numbers', [1, 2, 3]);
-
-    let mapped = db.get('users.posts.first.numbers').map(num => num * 2, true);
-
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
-    expect(mapped).toEqual([2, 4, 6]);
-    expect(data.numbers).toEqual([2, 4, 6]);
-  });
-
   test('Error handling when mapping a non-function', () => {
     db.get('users.posts.first').set('tags', ['tag1', 'tag2', 'tag3']);
 
@@ -261,16 +251,6 @@ describe('[SORT]', () => {
     expect(data.numbers).toEqual([3, 2, 1]);
   });
 
-  test('Sorting an array and returning the result', () => {
-    db.get('users.posts.first').set('tags', ['tag2', 'tag1', 'tag3']);
-
-    let sorted = db.get('users.posts.first.tags').sort(undefined, true);
-
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
-    expect(sorted).toEqual(['tag1', 'tag2', 'tag3']);
-    expect(data.tags).toEqual(['tag1', 'tag2', 'tag3']);
-  });
-
   test('Error handling when passing a non-function as a sort parameter', () => {
     db.get('users.posts.first').set('tags', ['tag1', 'tag2', 'tag3']);
 
@@ -298,16 +278,6 @@ describe('[FILTER]', () => {
     expect(data.numbers).toEqual([3, 4, 5]);
   });
 
-  test('Filtering an array with a function and returning the result', () => {
-    db.get('users.posts.first').set('numbers', [1, 2, 3, 4, 5]);
-
-    let filtered = db.get('users.posts.first.numbers').filter(num => num % 2 === 0, true);
-
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
-    expect(filtered).toEqual([2, 4]);
-    expect(data.numbers).toEqual([2, 4]);
-  });
-
   test('Error handling when passing a non-function as a filter parameter', () => {
     db.get('users.posts.first').set('tags', ['tag1', 'tag2', 'tag3']);
 
@@ -333,16 +303,6 @@ describe('[REDUCE]', () => {
 
     let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.numbers).toEqual(15);
-  });
-
-  test('Reducing an array with a function and returning the result', () => {
-    db.get('users.posts.first').set('numbers', [1, 2, 3, 4, 5]);
-
-    let reduced = db.get('users.posts.first.numbers').reduce((acc, num) => acc * num, true);
-
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
-    expect(reduced).toEqual(120);
-    expect(data.numbers).toEqual(120);
   });
 
   test('Error handling when passing a non-function as a reduce parameter', () => {

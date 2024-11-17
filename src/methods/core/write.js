@@ -1,4 +1,4 @@
-import { ValueType } from '../../utils/enums';
+import { ValueType } from '../../utils/enums.js';
 
 import * as fs from 'fs';
 import path from 'path';

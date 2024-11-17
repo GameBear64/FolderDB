@@ -1,4 +1,4 @@
-import { ValueType, TimeFormat } from '../../utils/enums';
+import { ValueType, TimeFormat } from '../../utils/enums.js';
 
 // NOTE: General methods don't edit the value
 

@@ -1,4 +1,4 @@
-import { CaseFormat } from '../../utils/enums';
+import { CaseFormat } from '../../utils/enums.js';
 
 /**
  * Changes the case format of the target string property.
