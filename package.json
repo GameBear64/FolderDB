@@ -1,18 +1,20 @@
 {
   "name": "@gambar/folder-db",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Simple json based database solution.",
   "type": "module",
-  "main": "src/index.js",
-  "directories": {
-    "doc": "docs",
-    "test": "tests"
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "exports": {
+    "require": "./dist/index.cjs",
+    "import": "./dist/index.js"
   },
   "scripts": {
-    "test": "bun test"
+    "test": "bun test",
+    "build": "rollup -c"
   },
   "files": [
-    "/src"
+    "/dist"
   ],
   "repository": {
     "type": "git",
@@ -28,5 +30,10 @@
   "bugs": {
     "url": "https://github.com/GameBear64/FolderDB/issues"
   },
-  "homepage": "https://github.com/GameBear64/FolderDB#readme"
+  "homepage": "https://github.com/GameBear64/FolderDB#readme",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "rollup": "^4.27.2"
+  }
 }
