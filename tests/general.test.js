@@ -29,9 +29,12 @@ describe('[POPULATE]', () => {
 
   test('Error handling for non-array references', () => {
     fs.writeFileSync('./test-db/products.json', JSON.stringify({ id: 1, name: 'Product 1' }, null, 2));
-    expect(() => {
-      db.get('users.posts.first').populate('ref');
-    }).toThrow('Path not found: 0');
+
+    db.get('users.posts.first').populate('ref');
+
+    const result = db.get('users.posts.first');
+    // Did not populate
+    expect(result.data.ref).toEqual('products.0');
   });
 
   test('Error handling for value level population', () => {

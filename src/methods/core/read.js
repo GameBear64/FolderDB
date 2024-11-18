@@ -8,11 +8,10 @@ import { ValueType } from '../../utils/enums.js';
  *
  * @param {string} [directory=this.dbPath] The directory path to navigate.
  * @returns {Object|this} Returns the current instance or an object indicating the next action.
- * @throws {Error} Throws an error if the directory cannot be read.
  */
 function _dirNavigator(directory = this.dbPath) {
   if (!fs.existsSync(directory) || !fs.lstatSync(directory).isDirectory()) {
-    throw new Error(`Invalid directory path: ${directory}`);
+    this.createFolder(directory);
   }
 
   let dir = fs.readdirSync(directory);
@@ -35,7 +34,6 @@ function _dirNavigator(directory = this.dbPath) {
  * Reads a JSON file and parses its content.
  *
  * @returns {void}
- * @throws {Error} - Throws an error if the file cannot be read or parsed.
  */
 function _getFile() {
   // Going back with .back()
@@ -54,7 +52,7 @@ function _getFile() {
     const currentDir = fs.readdirSync(this.targetFile);
     const foundFile = path.parse(currentDir.find(file => path.parse(file).name == this.pointers[0]));
 
-    if (!foundFile) throw new Error('Target file not found');
+    if (!foundFile) return;
 
     this.targetFile = path.join(this.targetFile, foundFile.base);
     this.pointers.shift();
@@ -67,7 +65,7 @@ function _getFile() {
 
     this.valueType = ValueType.FILE;
   } catch (error) {
-    throw new Error(`Error reading file ${this.targetFile}`, error);
+    return;
   }
 }
 
@@ -75,17 +73,16 @@ function _getFile() {
  * Navigates through the data structure based on the current pointers.
  *
  * @returns {void}
- * @throws {Error} - Throws an error if a path in the pointers does not exist in the data.
  */
 function _fileNavigator() {
   if (this.pointers.length > 0) this.valueType = ValueType.VALUE;
   // we stop removing pointers to be able to navigate back here
 
   for (const key of this.pointers) {
-    if (this.data.hasOwnProperty(key)) {
+    if (this.data?.hasOwnProperty(key)) {
       this.data = this.data[key];
     } else {
-      throw new Error(`Path not found: ${key}`);
+      this.data = null;
     }
   }
 }

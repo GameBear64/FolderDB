@@ -23,7 +23,7 @@ function createFolder(name) {
  *
  * @function createFile
  * @param {string} name - The name of the file, including directory if necessary.
- * @param {Buffer|string} [buffer] - The content to write to the file. Defaults to an empty JSON object if omitted.
+ * @param {Buffer|Object|string} [buffer] - The content to write to the file. Defaults to an empty JSON object if omitted.
  * @returns {Object} The current instance for chaining.
  */
 function createFile(name, buffer) {
@@ -34,7 +34,7 @@ function createFile(name, buffer) {
   }
 
   if (details.ext == '') {
-    fs.writeFileSync(path.resolve(this.targetFile, details.dir, details.name + '.json'), buffer || JSON.stringify({}));
+    fs.writeFileSync(path.resolve(this.targetFile, details.dir, details.name + '.json'), JSON.stringify(buffer || {}));
   } else {
     fs.writeFileSync(path.resolve(this.targetFile, details.dir, details.base), buffer);
   }

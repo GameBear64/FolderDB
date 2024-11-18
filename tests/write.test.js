@@ -113,6 +113,15 @@ describe('[FILE]', () => {
     expect(db.get('users.newFile').data).toEqual(newFile);
     expect(db.get('users.folder.subFolder.new').data).toEqual(newInFolder);
   });
+
+  test('Creating a file with contents', () => {
+    const user = { id: 1, name: 'gambar', password: 'secret' };
+
+    db.get('users').createFile('newContentFile', user);
+
+    const newFile = JSON.parse(fs.readFileSync('./test-db/users/newContentFile.json', 'UTF-8'));
+    expect(newFile).toEqual(user);
+  });
 });
 
 describe('[RENAME]', () => {
@@ -166,8 +175,6 @@ describe('[REMOVE]', () => {
 
     reference = reference.get('veryNested.a').remove();
 
-    expect(() => {
-      db.get('users.posts.first.veryNested.a.b');
-    }).toThrow('Path not found');
+    expect(reference.data).toEqual({});
   });
 });

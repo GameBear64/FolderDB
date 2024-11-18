@@ -9,14 +9,14 @@ import { ValueType } from '../src/utils/enums.js';
 const db = new FolderDB({ dbPath: './test-db', mergeInstances: true });
 
 describe('[FOLDERS]', () => {
-  test('Wrong db path', () => {
-    const errorDB = db._clone();
-    errorDB.dbPath = './nothing';
+  // test('Wrong db path', () => {
+  //   const errorDB = db._clone();
+  //   errorDB.dbPath = './nothing';
 
-    expect(() => {
-      errorDB.get('nothing');
-    }).toThrow('Invalid directory path: ./nothing');
-  });
+  //   expect(() => {
+  //     errorDB.get('nothing');
+  //   }).toThrow('Invalid directory path: ./nothing');
+  // });
 
   test('Wrong parameters', () => {
     expect(() => {
@@ -40,9 +40,8 @@ describe('[FOLDERS]', () => {
   });
 
   test('Wrong directory', () => {
-    expect(() => {
-      db.get('nothing');
-    }).toThrow('Error reading file');
+    const result = db.get('nothing');
+    expect(result.data).toEqual(null);
   });
 });
 
@@ -66,9 +65,8 @@ describe('[FILES]', () => {
   });
 
   test('Wrong file', () => {
-    expect(() => {
-      db.get('users.posts.nothing');
-    }).toThrow('Error reading file');
+    const result = db.get('users.posts.nothing');
+    expect(result.data).toEqual(null);
   });
 });
 
@@ -91,9 +89,8 @@ describe('[VALUES]', () => {
   });
 
   test('Wrong value', () => {
-    expect(() => {
-      db.get('users.posts.first.nothing');
-    }).toThrow('Path not found: nothing');
+    const result = db.get('users.posts.first.nothing');
+    expect(result.data).toEqual(null);
   });
 });
 

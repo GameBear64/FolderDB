@@ -74,8 +74,6 @@ function average() {
   const sum = numbers.reduce((acc, num) => acc + num, 0);
   this.data = sum / numbers.length;
 
-  console.log(this.data);
-
   return this;
 }
 
@@ -156,7 +154,6 @@ function selectOmit(fieldsToOmit) {
  */
 function isPast() {
   const value = Number(this.data);
-  console.log(value);
 
   if (!value) {
     throw new Error('This method can only be used on numbers representing timestamps');
