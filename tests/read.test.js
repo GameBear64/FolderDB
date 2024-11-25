@@ -156,6 +156,38 @@ describe('[BACK]', () => {
   });
 });
 
+describe('[FILE_EXISTS]', () => {
+  test('Checking if a file exists', () => {
+    db.get('users').createFile('existingFile');
+    const filePath = './test-db/users/existingFile.json';
+
+    // Test for an existing file
+    expect(fs.existsSync(filePath)).toBe(true);
+    expect(db.get('users').fileExists('existingFile.json')).toBe(true);
+
+    // Test for a non-existing file
+    expect(db.get('users').fileExists('nonExistentFile.json')).toBe(false);
+  });
+});
+
+describe('[METADATA]', () => {
+  test('Retrieving file metadata', () => {
+    const userData = { id: 1, name: 'John Doe' };
+    db.get('users').createFile('metadataFile', userData);
+
+    const metadata = db.get('users.metadataFile').metadata();
+    expect(metadata).toBeTruthy();
+    expect(metadata.type).toBe('file');
+    expect(metadata.size).toBeGreaterThan(0);
+    expect(metadata.createdAt).toBeInstanceOf(Date);
+    expect(metadata.modifiedAt).toBeInstanceOf(Date);
+
+    // Test for non-existing file metadata
+    const nonExistentMetadata = db.get('users.nothing').metadata();
+    expect(nonExistentMetadata).toBeNull();
+  });
+});
+
 describe('[OTHER]', () => {
   test('Chaining methods', () => {
     const result = db.get('users.posts').get('first').get('title');

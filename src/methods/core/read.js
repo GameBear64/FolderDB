@@ -211,4 +211,36 @@ function back(steps = 1) {
   return this;
 }
 
-export { _dirNavigator, _getFile, _fileNavigator, get, getTree, back };
+/**
+ * Checks if a file exists at the specified path.
+ * @param {string} name - The name of the file to check.
+ * @returns {boolean} - Returns true if the file exists, otherwise false.
+ */
+function fileExists(name) {
+  const filePath = path.resolve(this.targetFile, ...this.pointers, name);
+  return fs.existsSync(filePath);
+}
+
+/**
+ * Retrieves metadata of the specified file.
+ * @returns {Object|null} - Returns an object containing file metadata such as type, size, and creation time,
+ * or null if the file does not exist.
+ */
+function metadata() {
+  const filePath = path.resolve(this.targetFile, ...this.pointers);
+
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
+
+  const stats = fs.statSync(filePath);
+
+  return {
+    type: stats.isFile() ? 'file' : stats.isDirectory() ? 'directory' : 'other',
+    size: stats.size,
+    createdAt: stats.birthtime,
+    modifiedAt: stats.mtime,
+  };
+}
+
+export { _dirNavigator, _getFile, _fileNavigator, get, getTree, back, fileExists, metadata };

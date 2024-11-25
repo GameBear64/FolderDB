@@ -11,7 +11,7 @@ import path from 'path';
  * @returns {Object} The current instance for chaining.
  */
 function createFolder(name) {
-  fs.mkdirSync(path.resolve(this.targetFile, name), { recursive: true });
+  this.targetFile = fs.mkdirSync(path.resolve(this.targetFile, name), { recursive: true });
 
   return this;
 }
@@ -27,17 +27,17 @@ function createFolder(name) {
  * @returns {Object} The current instance for chaining.
  */
 function createFile(name, buffer) {
+  const fullPath = path.resolve(this.targetFile, ...this.pointers);
   const details = path.parse(name);
+  const dirPath = path.resolve(fullPath, details.dir);
 
-  if (details.dir != '') {
-    this._createFolder(path.resolve(this.targetFile, details.dir));
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
   }
 
-  if (details.ext == '') {
-    fs.writeFileSync(path.resolve(this.targetFile, details.dir, details.name + '.json'), JSON.stringify(buffer || {}));
-  } else {
-    fs.writeFileSync(path.resolve(this.targetFile, details.dir, details.base), buffer);
-  }
+  const filePath = details.ext ? path.resolve(dirPath, details.base) : path.resolve(dirPath, details.name + '.json');
+
+  fs.writeFileSync(filePath, details.ext ? buffer : JSON.stringify(buffer || {}));
   return this;
 }
 
@@ -72,12 +72,10 @@ function set(_key, _value) {
   }
 
   current[pointers[pointers.length - 1]] = value;
+  if (pointers.length === 0) this.data = value;
 
   fs.writeFileSync(this.targetFile, JSON.stringify(this.data, null, 2));
-
-  // Get updated value
-  this.__fileNavigator();
-
+  this.__fileNavigator(); // Get updated value
   return this;
 }
 

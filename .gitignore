@@ -10,3 +10,6 @@ dist-ssr
 
 # Editor directories and files
 .vscode/*
+
+# Playground database folder
+db

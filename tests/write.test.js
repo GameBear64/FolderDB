@@ -72,6 +72,17 @@ describe('[SET]', () => {
     expect(instance.data.testKey).toEqual('some other value');
   });
 
+  test('Overwriting a whole file', () => {
+    const initialData = { id: 1, title: 'Original Post' };
+    const newData = { id: 2, title: 'Updated Post', content: 'This is new content.' };
+
+    db.get('users.posts.overwrite').createFile('post', initialData);
+    db.get('users.posts.overwrite.post').set(newData);
+
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/overwrite/post.json', 'UTF-8'));
+    expect(data).toEqual(newData);
+  });
+
   test('Write after multiple gets', () => {
     let instance = db.get('users.posts.first').set('testKey', { a: { b: { c: 'nest' } } });
 
@@ -103,15 +114,19 @@ describe('[FILE]', () => {
   test('Creating a file', () => {
     db.get('users').createFile('newFile');
     db.get('users').createFile('folder/subFolder/new');
+    db.get('users').get('moreUser').get('details').createFile('newest');
 
     const newFile = JSON.parse(fs.readFileSync('./test-db/users/newFile.json', 'UTF-8'));
     const newInFolder = JSON.parse(fs.readFileSync('./test-db/users/folder/subFolder/new.json', 'UTF-8'));
+    const newInFolderPointers = JSON.parse(fs.readFileSync('./test-db/users/moreUser/details/newest.json', 'UTF-8'));
 
     expect(newFile).toEqual({});
     expect(newInFolder).toEqual({});
+    expect(newInFolderPointers).toEqual({});
 
     expect(db.get('users.newFile').data).toEqual(newFile);
     expect(db.get('users.folder.subFolder.new').data).toEqual(newInFolder);
+    expect(db.get('users.moreUser.details.newest').data).toEqual(newInFolderPointers);
   });
 
   test('Creating a file with contents', () => {

@@ -6,8 +6,6 @@ const DBPath = path.resolve('./test-db');
 const ToolsPath = path.resolve('./tests/tools');
 
 beforeAll(() => {
-  fs.mkdirSync(DBPath);
-
   fs.copyFileSync(path.resolve(ToolsPath, 'products.json'), path.resolve(DBPath, 'products.json'));
 
   fs.mkdirSync(path.resolve(DBPath, 'users/posts'), { recursive: true });

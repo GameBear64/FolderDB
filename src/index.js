@@ -1,6 +1,7 @@
 import TaskQueue from './utils/queue.js';
 import methods from './methods/all.js';
 import path from 'path';
+import * as fs from 'fs';
 
 import * as e from './utils/enums.js';
 
@@ -14,9 +15,14 @@ class FolderDB {
     if (FolderDB._instance && !options.mergeInstances) {
       throw new Error('Only one instance allowed!');
     }
+
     FolderDB._instance = this;
     this.dbPath = path.resolve(options.dbPath);
     this.queue = new TaskQueue();
+
+    if (!fs.statSync(this.dbPath, { throwIfNoEntry: false })) {
+      fs.mkdirSync(this.dbPath, { recursive: true });
+    }
 
     this.pointers = [];
     this.targetFile = this.dbPath;
