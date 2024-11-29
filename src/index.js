@@ -1,7 +1,9 @@
-import TaskQueue from './utils/queue.js';
-import methods from './methods/all.js';
 import path from 'path';
 import * as fs from 'fs';
+
+import TaskQueue from './utils/queue.js';
+import methods from './methods/all.js';
+import * as helpers from './utils/helpers.js';
 
 import * as e from './utils/enums.js';
 
@@ -29,8 +31,16 @@ class FolderDB {
     this.data = null;
     this.valueType = e.ValueType.DIRECTORY;
 
+    this.__bindHelpers(this, Object.values(helpers));
     this.__bindMethods(this, Object.values(methods));
   }
+
+  __bindHelpers(instance, methods) {
+    methods.forEach(method => {
+      instance['_' + method.name] = method.bind(instance);
+    });
+  }
+
   __bindMethods(instance, methods) {
     methods.forEach(method => {
       // NOTE: this way we can skip the queue for internal use
@@ -38,22 +48,6 @@ class FolderDB {
 
       instance[method.name] = (...args) => this.queue.add(() => method.apply(instance, args));
     });
-  }
-
-  // Clone method to create a new instance with the same state
-  _clone({ clean } = { clean: false }) {
-    const clone = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
-
-    if (clean) {
-      clone.pointers = [];
-      clone.targetFile = this.dbPath;
-      clone.data = null;
-      clone.valueType = e.ValueType.DIRECTORY;
-    }
-
-    this.__bindMethods(clone, Object.values(methods));
-
-    return clone;
   }
 }
 

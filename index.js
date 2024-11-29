@@ -9,4 +9,6 @@ const db = new FolderDB({ dbPath: './db', mergeInstances: true });
 // console.log(db);
 // console.log(db.get('users'));
 
-db.get('users').createFile('gambar');
+// db.get('users').createFile('gambar');
+
+console.log(db.get('users.gambar').data);

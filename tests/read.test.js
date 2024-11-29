@@ -9,15 +9,6 @@ import { ValueType } from '../src/utils/enums.js';
 const db = new FolderDB({ dbPath: './test-db', mergeInstances: true });
 
 describe('[FOLDERS]', () => {
-  // test('Wrong db path', () => {
-  //   const errorDB = db._clone();
-  //   errorDB.dbPath = './nothing';
-
-  //   expect(() => {
-  //     errorDB.get('nothing');
-  //   }).toThrow('Invalid directory path: ./nothing');
-  // });
-
   test('Wrong parameters', () => {
     expect(() => {
       db.get();

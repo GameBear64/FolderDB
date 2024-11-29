@@ -4,90 +4,6 @@ import path from 'path';
 import { ValueType } from '../../utils/enums.js';
 
 /**
- * Navigates through a directory structure based on the current pointers.
- *
- * @param {string} [directory=this.dbPath] The directory path to navigate.
- * @returns {Object|this} Returns the current instance or an object indicating the next action.
- */
-function _dirNavigator(directory = this.dbPath) {
-  if (!fs.existsSync(directory) || !fs.lstatSync(directory).isDirectory()) {
-    this.createFolder(directory);
-  }
-
-  let dir = fs.readdirSync(directory);
-
-  if (this.pointers.length === 0) {
-    this.data = dir;
-    return this;
-  }
-
-  if (dir.includes(this.pointers[0])) {
-    this.targetFile = path.join(this.targetFile, this.pointers[0]);
-
-    return this.__dirNavigator(path.join(directory, this.pointers.shift()));
-  }
-
-  return { doNext: true };
-}
-
-/**
- * Reads a JSON file and parses its content.
- *
- * @returns {void}
- */
-function _getFile() {
-  // Going back with .back()
-  if (fs.lstatSync(this.targetFile).isFile()) {
-    const fileDetails = path.parse(this.targetFile);
-
-    if (fileDetails.ext == '.json') {
-      this.data = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
-    }
-
-    this.valueType = ValueType.FILE;
-    return;
-  }
-
-  try {
-    const currentDir = fs.readdirSync(this.targetFile);
-    const foundFile = path.parse(currentDir.find(file => path.parse(file).name == this.pointers[0]));
-
-    if (!foundFile) return;
-
-    this.targetFile = path.join(this.targetFile, foundFile.base);
-    this.pointers.shift();
-
-    if (foundFile.ext == '.json') {
-      this.data = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
-    } else {
-      this.data = { buffer: fs.readFileSync(this.targetFile), name: foundFile.name, ext: foundFile.ext };
-    }
-
-    this.valueType = ValueType.FILE;
-  } catch (error) {
-    return;
-  }
-}
-
-/**
- * Navigates through the data structure based on the current pointers.
- *
- * @returns {void}
- */
-function _fileNavigator() {
-  if (this.pointers.length > 0) this.valueType = ValueType.VALUE;
-  // we stop removing pointers to be able to navigate back here
-
-  for (const key of this.pointers) {
-    if (this.data?.hasOwnProperty(key)) {
-      this.data = this.data[key];
-    } else {
-      this.data = null;
-    }
-  }
-}
-
-/**
  * Retrieves a value based on a dot-separated string path.
  *
  * @param {string} value - The dot-separated string path to retrieve the value.
@@ -100,37 +16,16 @@ function get(value) {
   }
 
   const clone = this._clone();
-
   clone.pointers = [...clone.pointers, ...value.split('.').filter(p => p !== '')];
 
-  const { doNext } = clone.__dirNavigator();
+  const { doNext } = clone._dirNavigator();
 
   if (doNext) {
-    clone.__getFile();
-    clone.__fileNavigator();
+    clone._getFile();
+    clone._fileNavigator();
   }
 
   return clone;
-}
-
-function _traverseDir(currentDir) {
-  const dirContent = fs.readdirSync(currentDir);
-  const result = {};
-
-  dirContent.forEach(item => {
-    const fullPath = path.join(currentDir, item);
-
-    if (fs.lstatSync(fullPath).isDirectory()) {
-      result[item] = _traverseDir(fullPath);
-    } else if (item.endsWith('.json')) {
-      const data = fs.readFileSync(fullPath, 'utf-8');
-      result[item.slice(0, -5)] = JSON.parse(data);
-    } else {
-      result[item] = null; // Dead end
-    }
-  });
-
-  return result;
 }
 
 /**
@@ -156,7 +51,7 @@ function getTree(value) {
 
       if (fs.existsSync(currentDir + '.json')) {
         clone.pointers = pointers.slice(i, pointers.length);
-        clone.__getFile();
+        clone._getFile();
       } else {
         clone.targetFile = currentDir;
       }
@@ -164,10 +59,10 @@ function getTree(value) {
   }
 
   if (clone.valueType == ValueType.FILE) {
-    clone.__fileNavigator();
+    clone._fileNavigator();
     return clone.data;
   } else {
-    return _traverseDir(currentDir);
+    return this._traverseDir(currentDir);
   }
 }
 
@@ -193,8 +88,8 @@ function back(steps = 1) {
 
     switch (this.valueType) {
       case ValueType.VALUE:
-        this.__getFile();
-        this.__fileNavigator();
+        this._getFile();
+        this._fileNavigator();
         break;
 
       case ValueType.FILE:
@@ -243,4 +138,4 @@ function metadata() {
   };
 }
 
-export { _dirNavigator, _getFile, _fileNavigator, get, getTree, back, fileExists, metadata };
+export { get, getTree, back, fileExists, metadata };
