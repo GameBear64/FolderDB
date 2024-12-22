@@ -1,6 +1,6 @@
 {
   "name": "@gambar/folder-db",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Simple json based database solution.",
   "type": "module",
   "main": "dist/index.cjs",
@@ -14,7 +14,7 @@
     "dev": "bun --watch index.js",
     "build": "rollup -c",
     "upload": "npm run build && npm publish --access=public",
-    "prepublishOnly": "cp README.npm.md README.md",
+    "prepublishOnly": "cp docs/README.npm.md README.md",
     "postpublish": "git checkout README.md"
   },
   "files": [
@@ -27,7 +27,11 @@
   "keywords": [
     "database",
     "json",
-    "simple"
+    "simple",
+    "nosql",
+    "filesystem",
+    "document oriented",
+    "no-server"
   ],
   "author": "GamBar",
   "license": "ISC",
@@ -39,6 +43,7 @@
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-node-resolve": "^15.3.1",
     "@rollup/plugin-terser": "^0.4.4",
-    "rollup": "^4.29.1"
+    "rollup": "^4.29.1",
+    "rollup-plugin-cleanup": "^3.2.1"
   }
 }

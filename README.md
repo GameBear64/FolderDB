@@ -46,8 +46,6 @@ const db = new FolderDB({ dbPath: './db' });
 
 # Documentation
 
-> Detailed documentation can be found on [GitHub](https://github.com/GameBear64/FolderDB).
-
 - [**Read**](./docs/Read.md)
 - [**Write**](./docs/Write.md)
 ---
@@ -156,6 +154,7 @@ Contributors are welcome, if you like the idea and want to imporve it with me, m
 <br>
 Thank you for checking out my project.
 
+<br>
 <br>
 
 ---
