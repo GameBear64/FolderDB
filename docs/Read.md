@@ -33,6 +33,44 @@ DB.get("details.age").data
 //returns "19"
 ```
 
+#### Range selector:
+> Syntax [X:Y] where X is the start and Y is the end (inclusive)  
+> Having a . in front is important
+
+
+*Basic usage:*
+```js
+//DB: {"posts": ['First', "Second", "Third", "Forth"]}
+DB.get("posts.[0:3]").data
+//returns ["First", "Second", "Third"]
+```
+
+*Partial select:*
+> [2:] everything but the first two  
+> [-2:] selects the last two  
+> [:2] selects the first two  
+> [:-2] everything but the last two  
+```js
+//DB: {"posts": ['First', "Second", "Third", "Forth"]}
+DB.get("posts.[:3]").data
+//returns ["First", "Second", "Third"]
+```
+
+
+*Get nested values:*
+```js
+//DB: {"posts": [
+// {"title": "First"},
+// {"title": "Second"},
+// {"title": "Third"},
+// {"title": "Forth"}
+//]}
+
+DB.get("posts.[0:3].title").data
+
+//returns ["First", "Second", "Third"]
+```
+
 ---
 ### .getTree(value)
 Recursively navigates through a directory and builds a tree structure.

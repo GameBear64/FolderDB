@@ -2,6 +2,10 @@
 // -----------------------------------------------------
 
 const FolderDB = require('./src/index').default;
+// const { CaseFormat } = require('./src/index').enums;
+
+// console.log(CaseFormat);
+
 // const FolderDB = require('./dist/index.cjs').default;
 
 const db = new FolderDB({ dbPath: './db', mergeInstances: true });
@@ -11,6 +15,6 @@ const db = new FolderDB({ dbPath: './db', mergeInstances: true });
 
 // db.get('users').createFile('gambar');
 
-// console.log(db.get('users.gambar.posts.[0:3].title').data);
+console.log(db.get('users.gambar.posts.[:-2].title').data);
 
-console.log(db.get('users.gambar.posts.[0:3].title').set('New title').data);
+// console.log(db.get('users.gambar.posts.[0:3].title').set('New title').data);

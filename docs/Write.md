@@ -62,6 +62,27 @@ DB.get('user.age').set(30)
 //after: {"user": {"name": "John", "age": 30}}
 ```
 
+> Ranges can also be set, refer to [get() ranges](./Read.md#range-selector)
+
+**Example:**
+```js
+//DB: {"posts": [
+// {"title": "First"},
+// {"title": "Second"},
+// {"title": "Third"},
+// {"title": "Forth"}
+//]}
+
+DB.get("posts.[0:3].title").set("Zero")
+
+//DB: {"posts": [
+// {"title": "Zero"},
+// {"title": "Zero"},
+// {"title": "Zero"},
+// {"title": "Forth"}
+//]}
+```
+
 ---
 ### .rename(newName)
 Renames a file, directory, or a value inside an object.
