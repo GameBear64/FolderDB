@@ -21,6 +21,7 @@
 - [Documentation](#documentation)
 - [Basic usage](#basic-usage)
 - [Real world example](#real-world-example)
+- [Purpose](#purpose)
 
 <br>
 
@@ -40,6 +41,8 @@ const { CaseFormat } = require('@gambar/folder-db').enums;
 ```js
 const db = new FolderDB({ dbPath: './db' });
 ```
+
+<br>
 
 # Documentation
 
@@ -134,3 +137,25 @@ res.status(200).json();
 const userFile = await db.get('users').get(req.authUser.id).data;
 return res.status(200).json(userFile);
 ```
+
+# Purpose
+
+I really like MongoDB, the document structure is great! But It needs a constantly running service, my projects don't need all that.  
+I really like SQLite, everything contained in one file is amazing! But SQL relations don't feel right to me, especially pivot tables.  
+Both need separate apps to visualize my data.
+
+FolderDB is my solution to these problems im having, no services needed, no extra apps needed and its all locally stored.  
+Seeds and dumps can be easily done. It can be only local with `.gitignore`. And changes can be done fast trough the code editor.  
+Exactly what I need for my small applications.  
+
+This is not an enterprise solution of course, its a solution that will help me do my silly little websites/discord bots/projects.  
+Contributors are welcome, if you like the idea and want to imporve it with me, make a PR or even better - contact me and let's talk!  
+
+---
+
+<br>
+Thank you for checking out my project.
+
+<br>
+
+---
