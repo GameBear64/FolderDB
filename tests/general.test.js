@@ -154,7 +154,7 @@ describe('[SELECT PICK]', () => {
 
   test('Selecting desired fields', () => {
     const result = db.get('users.posts.first.sidePost').selectPick(['title', 'author']);
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
     expect(result.data).toEqual({
       title: data.sidePost.title,
@@ -187,7 +187,7 @@ describe('[SELECT OMIT]', () => {
 
   test('Omitting specified fields', () => {
     const result = db.get('users.posts.first.sidePost').selectOmit(['password']);
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
     expect(result.data).toEqual({
       title: data.sidePost.title,
@@ -234,7 +234,7 @@ describe('[FORMAT TIMESTAMP]', () => {
 
   test('Short format', () => {
     const result = db.get('users.posts.first.timestamp').formatTimestamp(TimeFormat.SHORT);
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
     const expectedDate = new Date(data.timestamp).toLocaleDateString('en-US'); // MM/DD/YYYY
     expect(result).toEqual(expectedDate);
@@ -242,7 +242,7 @@ describe('[FORMAT TIMESTAMP]', () => {
 
   test('Medium format', () => {
     const result = db.get('users.posts.first.timestamp').formatTimestamp(TimeFormat.MEDIUM);
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
     const expectedDate = new Date(data.timestamp).toLocaleString('en-US', {
       year: 'numeric',
@@ -257,7 +257,7 @@ describe('[FORMAT TIMESTAMP]', () => {
 
   test('Long format', () => {
     const result = db.get('users.posts.first.timestamp').formatTimestamp(TimeFormat.LONG);
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
     const expectedDate = new Date(data.timestamp).toLocaleString('en-US', {
       weekday: 'long',

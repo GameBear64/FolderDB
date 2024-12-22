@@ -11,7 +11,7 @@ describe('[PUSH]', () => {
 
     db.get('users.posts.first.comments').push('comment3');
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.comments).toEqual(['comment1', 'comment2', 'comment3']);
   });
 
@@ -20,7 +20,7 @@ describe('[PUSH]', () => {
 
     db.get('users.posts.first.tags').push('tag2', 'tag3');
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1', 'tag2', 'tag3']);
   });
 
@@ -39,7 +39,7 @@ describe('[PUSH SET]', () => {
 
     db.get('users.posts.first.tags').pushSet('tag2', 'tag3');
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1', 'tag2', 'tag3']);
   });
 
@@ -48,7 +48,7 @@ describe('[PUSH SET]', () => {
 
     db.get('users.posts.first.tags').pushSet('tag2', 'tag3', 'tag4');
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1', 'tag2', 'tag3', 'tag4']);
   });
 
@@ -57,7 +57,7 @@ describe('[PUSH SET]', () => {
 
     db.get('users.posts.first.tags').pushSet('tag1', 'tag2');
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1', 'tag2']);
   });
 
@@ -76,7 +76,7 @@ describe('[PULL]', () => {
 
     db.get('users.posts.first.tags').pull();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1', 'tag2']);
   });
 
@@ -85,7 +85,7 @@ describe('[PULL]', () => {
 
     let pulled = db.get('users.posts.first.tags').pull({ result: true });
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(pulled).toEqual('tag3');
     expect(data.tags).toEqual(['tag1', 'tag2']);
   });
@@ -105,7 +105,7 @@ describe('[SHIFT]', () => {
 
     db.get('users.posts.first.tags').shift();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag2', 'tag3']);
   });
 
@@ -114,7 +114,7 @@ describe('[SHIFT]', () => {
 
     let shifted = db.get('users.posts.first.tags').shift({ result: true });
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(shifted).toEqual('tag1');
     expect(data.tags).toEqual(['tag2', 'tag3']);
   });
@@ -124,7 +124,7 @@ describe('[SHIFT]', () => {
 
     db.get('users.posts.first.tags').shift();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual([]);
   });
 
@@ -143,7 +143,7 @@ describe('[UNSHIFT]', () => {
 
     db.get('users.posts.first.tags').unshift('tag1', 'tag2');
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1', 'tag2', 'tag3']);
   });
 
@@ -152,7 +152,7 @@ describe('[UNSHIFT]', () => {
 
     db.get('users.posts.first.tags').unshift('tag1');
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1', 'tag2', 'tag3']);
   });
 
@@ -171,7 +171,7 @@ describe('[SPLICE]', () => {
 
     const removed = db.get('users.posts.first.tags').splice(1, 2);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(removed).toEqual(['tag2', 'tag3']);
     expect(data.tags).toEqual(['tag1', 'tag4']);
   });
@@ -181,7 +181,7 @@ describe('[SPLICE]', () => {
 
     const removed = db.get('users.posts.first.tags').splice(1, 0, 'tag2', 'tag4');
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(removed).toEqual([]);
     expect(data.tags).toEqual(['tag1', 'tag2', 'tag4', 'tag3']);
   });
@@ -191,7 +191,7 @@ describe('[SPLICE]', () => {
 
     const removed = db.get('users.posts.first.tags').splice(-1, 1);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(removed).toEqual(['tag3']);
     expect(data.tags).toEqual(['tag1', 'tag2']);
   });
@@ -211,7 +211,7 @@ describe('[MAP]', () => {
 
     db.get('users.posts.first.tags').map(tag => tag.toUpperCase());
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['TAG1', 'TAG2', 'TAG3']);
   });
 
@@ -238,7 +238,7 @@ describe('[SORT]', () => {
 
     db.get('users.posts.first.numbers').sort();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.numbers).toEqual([1, 2, 3]);
   });
 
@@ -247,7 +247,7 @@ describe('[SORT]', () => {
 
     db.get('users.posts.first.numbers').sort((a, b) => b - a);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.numbers).toEqual([3, 2, 1]);
   });
 
@@ -274,7 +274,7 @@ describe('[FILTER]', () => {
 
     db.get('users.posts.first.numbers').filter(num => num > 2);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.numbers).toEqual([3, 4, 5]);
   });
 
@@ -301,7 +301,7 @@ describe('[REDUCE]', () => {
 
     db.get('users.posts.first.numbers').reduce((acc, num) => acc + num);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.numbers).toEqual(15);
   });
 
@@ -336,7 +336,7 @@ describe('[CONCAT]', () => {
 
     db.get('users.posts.first.tags').concat(['tag3'], ['tag4']);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1', 'tag2', 'tag3', 'tag4']);
   });
 
@@ -345,7 +345,7 @@ describe('[CONCAT]', () => {
 
     db.get('users.posts.first.tags').concat([]);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1']);
   });
 
@@ -354,7 +354,7 @@ describe('[CONCAT]', () => {
 
     db.get('users.posts.first.items').concat([2, 'b']);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.items).toEqual([1, 'a', 2, 'b']);
   });
 
@@ -373,7 +373,7 @@ describe('[UNIQUE]', () => {
 
     db.get('users.posts.first.tags').unique();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1', 'tag2', 'tag3']);
   });
 
@@ -392,7 +392,7 @@ describe('[CHUNK]', () => {
 
     db.get('users.posts.first.numbers').chunk(2);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.numbers).toEqual([
       [1, 2],
       [3, 4],
@@ -405,7 +405,7 @@ describe('[CHUNK]', () => {
 
     db.get('users.posts.first.numbers').chunk(5);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.numbers).toEqual([[1, 2, 3]]);
   });
 
@@ -414,7 +414,7 @@ describe('[CHUNK]', () => {
 
     db.get('users.posts.first.numbers').chunk(1);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.numbers).toEqual([[1], [2], [3], [4]]);
   });
 
@@ -436,7 +436,7 @@ describe('[FLATTEN MATRIX]', () => {
 
     db.get('users.posts.first.matrix').flattenMatrix();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.matrix).toEqual([1, 2, 3, 4, 5, 6, 7]);
   });
 
@@ -445,7 +445,7 @@ describe('[FLATTEN MATRIX]', () => {
 
     db.get('users.posts.first.matrix').flattenMatrix();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.matrix).toEqual([1, 2, 3, 4, 5]);
   });
 
@@ -454,7 +454,7 @@ describe('[FLATTEN MATRIX]', () => {
 
     db.get('users.posts.first.matrix').flattenMatrix();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.matrix).toEqual([]);
   });
 
@@ -473,7 +473,7 @@ describe('[SHUFFLE ARRAY]', () => {
 
     db.get('users.posts.first.array').shuffleArray();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.array.sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5]);
   });
 
@@ -482,7 +482,7 @@ describe('[SHUFFLE ARRAY]', () => {
 
     db.get('users.posts.first.array').shuffleArray();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.array).toEqual([]);
   });
 
@@ -501,7 +501,7 @@ describe('[INTERSECTION]', () => {
 
     db.get('users.posts.first.tags').intersection(['tag2', 'tag3', 'tag4']);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag2', 'tag3']);
   });
 
@@ -510,7 +510,7 @@ describe('[INTERSECTION]', () => {
 
     db.get('users.posts.first.tags').intersection([]);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual([]);
   });
 
@@ -519,7 +519,7 @@ describe('[INTERSECTION]', () => {
 
     db.get('users.posts.first.tags').intersection(['tag4', 'tag5']);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual([]);
   });
 
@@ -528,7 +528,7 @@ describe('[INTERSECTION]', () => {
 
     db.get('users.posts.first.details').intersection({ b: 2, c: 3, d: 4 });
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.details).toEqual({ b: 2, c: 3 });
   });
 
@@ -555,7 +555,7 @@ describe('[XOR]', () => {
 
     db.get('users.posts.first.tags').XOR(['tag2', 'tag3', 'tag4']);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1', 'tag4']);
   });
 
@@ -564,7 +564,7 @@ describe('[XOR]', () => {
 
     db.get('users.posts.first.tags').XOR([]);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1', 'tag2', 'tag3']);
   });
 
@@ -573,7 +573,7 @@ describe('[XOR]', () => {
 
     db.get('users.posts.first.tags').XOR(['tag4', 'tag5']);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1', 'tag2', 'tag3', 'tag4', 'tag5']);
   });
 
@@ -598,7 +598,7 @@ describe('[XOR]', () => {
 
     db.get('users.posts.first.details').XOR({ b: 2, c: 3 });
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.details).toEqual({ a: 1, c: 3 });
   });
 });
@@ -609,7 +609,7 @@ describe('[DIFFERENCE]', () => {
 
     db.get('users.posts.first.tags').difference(['tag2', 'tag3', 'tag4']);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1']);
   });
 
@@ -618,7 +618,7 @@ describe('[DIFFERENCE]', () => {
 
     db.get('users.posts.first.tags').difference([]);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1', 'tag2', 'tag3']);
   });
 
@@ -627,7 +627,7 @@ describe('[DIFFERENCE]', () => {
 
     db.get('users.posts.first.tags').difference(['tag3', 'tag4']);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag1', 'tag2']);
   });
 
@@ -652,7 +652,7 @@ describe('[DIFFERENCE]', () => {
 
     db.get('users.posts.first.details').difference({ b: 2, c: 3 });
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.details).toEqual({ a: 1 });
   });
 });
@@ -663,7 +663,7 @@ describe('[DIFFERENCE INSERT]', () => {
 
     db.get('users.posts.first.tags').differenceInsert(['tag2', 'tag3', 'tag4']);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual(['tag3', 'tag4']);
   });
 
@@ -672,7 +672,7 @@ describe('[DIFFERENCE INSERT]', () => {
 
     db.get('users.posts.first.tags').differenceInsert([]);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual([]);
   });
 
@@ -681,7 +681,7 @@ describe('[DIFFERENCE INSERT]', () => {
 
     db.get('users.posts.first.tags').differenceInsert(['tag1', 'tag2']);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.tags).toEqual([]);
   });
 
@@ -706,7 +706,7 @@ describe('[DIFFERENCE INSERT]', () => {
 
     db.get('users.posts.first.details').differenceInsert({ b: 2, c: 3 });
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.details).toEqual({ c: 3 });
   });
 });

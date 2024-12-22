@@ -50,26 +50,24 @@ function createFile(name, buffer) {
  */
 function set(_key, _value) {
   if (this.valueType == ValueType.DIRECTORY) {
-    throw new Error('Only values can be set');
+    throw new Error('Not a file');
   }
 
-  const value = _value !== undefined ? _value : _key;
-  const extraPointers = _value === undefined ? [] : _key.includes('.') ? _key.split('.').filter(p => p != '') : [_key];
-  const pointers = [...this.pointers, ...extraPointers];
+  let value = _value !== undefined ? _value : _key;
+  let pointers = this.pointers;
+
+  if (_value !== undefined) {
+    const extraPointers = _key.includes('.') ? _key.split('.').filter(Boolean) : [_key];
+    pointers = [...pointers, ...extraPointers];
+  }
 
   this.data = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));
-  let current = this.data; // reference, pointer
 
-  for (let i = 0; i < pointers.length - 1; i++) {
-    const key = pointers[i];
-    if (typeof current[key] !== 'object' || current[key] === null) {
-      current[key] = {};
-    }
-    current = current[key];
+  if (pointers.length === 0) {
+    this.data = value;
+  } else {
+    this._traverseAndSet(this.data, pointers, value);
   }
-
-  current[pointers[pointers.length - 1]] = value;
-  if (pointers.length === 0) this.data = value;
 
   fs.writeFileSync(this.targetFile, JSON.stringify(this.data, null, 2));
   this._fileNavigator(); // Get updated value

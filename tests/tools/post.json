@@ -13,6 +13,24 @@
     {
       "name": "discord",
       "url": "discord.gg"
+    },
+    {
+      "name": "twitter",
+      "url": "x.com"
+    }
+  ],
+  "moreLinks": [
+    {
+      "name": "google",
+      "url": "google.com"
+    },
+    {
+      "name": "discord",
+      "url": "discord.gg"
+    },
+    {
+      "name": "twitter",
+      "url": "x.com"
     }
   ],
   "likes": 64,

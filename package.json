@@ -1,6 +1,6 @@
 {
   "name": "@gambar/folder-db",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Simple json based database solution.",
   "type": "module",
   "main": "dist/index.cjs",
@@ -11,6 +11,7 @@
   },
   "scripts": {
     "test": "bun test",
+    "dev": "bun --watch index.js",
     "build": "rollup -c",
     "publish": "npm run build && npm publish --access=public"
   },

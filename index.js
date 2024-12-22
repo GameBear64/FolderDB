@@ -11,4 +11,6 @@ const db = new FolderDB({ dbPath: './db', mergeInstances: true });
 
 // db.get('users').createFile('gambar');
 
-console.log(db.get('users.gambar').data);
+// console.log(db.get('users.gambar.posts.[0:3].title').data);
+
+console.log(db.get('users.gambar.posts.[0:3].title').set('New title').data);

@@ -6,6 +6,8 @@ import * as helpers from './helpers.js';
 
 import { ValueType } from './enums.js';
 
+const rangeRegex = /\[(-?\d*):(-?\d*)]/;
+
 // Clone method to create a new instance with the same state
 function clone({ clean } = { clean: false }) {
   const clone = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
@@ -25,15 +27,11 @@ function clone({ clean } = { clean: false }) {
 }
 
 function dirNavigator(directory = this.dbPath) {
-  if (!fs.existsSync(directory) || !fs.lstatSync(directory).isDirectory()) {
-    this.createFolder(directory);
-  }
-
   let dir = fs.readdirSync(directory);
 
   if (this.pointers.length === 0) {
     this.data = dir;
-    return this;
+    return;
   }
 
   if (dir.includes(this.pointers[0])) {
@@ -42,7 +40,7 @@ function dirNavigator(directory = this.dbPath) {
     return this._dirNavigator(path.join(directory, this.pointers.shift()));
   }
 
-  return { doNext: true };
+  return;
 }
 
 function getFile() {
@@ -80,14 +78,21 @@ function getFile() {
 }
 
 function fileNavigator() {
+  if (this.valueType == ValueType.DIRECTORY) return;
   if (this.pointers.length > 0) this.valueType = ValueType.VALUE;
-  // we stop removing pointers to be able to navigate back here
 
   for (const key of this.pointers) {
     if (this.data?.hasOwnProperty(key)) {
       this.data = this.data[key];
+    } else if (rangeRegex.test(key) && Array.isArray(this.data)) {
+      // Range pattern detected
+      let [start, end] = key.slice(1, -1).split(':');
+      this.data = this.data.slice(start || 0, end || this.data.length);
+    } else if (Array.isArray(this.data)) {
+      this.data = this.data.map(item => item[key]);
     } else {
       this.data = null;
+      break;
     }
   }
 }
@@ -112,4 +117,34 @@ function traverseDir(currentDir) {
   return result;
 }
 
-export { clone, dirNavigator, getFile, fileNavigator, traverseDir };
+const traverseAndSet = (current, keys, newValue) => {
+  let pointer = current;
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+
+    // Range key
+    if (rangeRegex.test(key) && Array.isArray(pointer)) {
+      const [start, end] = key.slice(1, -1).split(':').map(Number);
+      const remainingKeys = keys.slice(i + 1);
+
+      for (let j = start; j < end; j++) {
+        traverseAndSet(pointer[j], remainingKeys, newValue);
+        // NOTE: A lot of loops...
+      }
+      return;
+    }
+
+    // Normal key
+    if (i === keys.length - 1) {
+      pointer[key] = newValue;
+    } else {
+      if (!pointer[key] || typeof pointer[key] !== 'object') {
+        pointer[key] = {};
+      }
+      pointer = pointer[key];
+    }
+  }
+};
+
+export { clone, dirNavigator, getFile, fileNavigator, traverseDir, traverseAndSet };

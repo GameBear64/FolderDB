@@ -17,7 +17,7 @@ describe('[MERGE]', () => {
 
   test('Merging objects', () => {
     const result = db.get('users.posts.first.sidePost').merge({ likes: 100 });
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
     expect(data.sidePost.likes).toEqual(result.data.likes);
     expect(data.sidePost).toEqual(result.data);
@@ -42,7 +42,7 @@ describe('[PICK]', () => {
 
   test('Picking desired fields', () => {
     const result = db.get('users.posts.first.sidePost').pick(['title', 'author']);
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
     expect(Object.keys(result.data)).toEqual(['title', 'author']);
     expect(result.data.title).toEqual(data.sidePost.title);
@@ -74,7 +74,7 @@ describe('[OMIT]', () => {
 
   test('Omitting specified fields', () => {
     const result = db.get('users.posts.first.sidePost').omit(['password']);
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
     expect(result.data.password).toBeUndefined();
     expect(result.data.title).toEqual(data.sidePost.title);

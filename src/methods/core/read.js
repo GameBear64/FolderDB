@@ -18,12 +18,9 @@ function get(value) {
   const clone = this._clone();
   clone.pointers = [...clone.pointers, ...value.split('.').filter(p => p !== '')];
 
-  const { doNext } = clone._dirNavigator();
-
-  if (doNext) {
-    clone._getFile();
-    clone._fileNavigator();
-  }
+  clone._dirNavigator();
+  clone._getFile();
+  clone._fileNavigator();
 
   return clone;
 }

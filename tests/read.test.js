@@ -40,9 +40,9 @@ describe('[FILES]', () => {
   test('Navigating to a file', () => {
     const result = db.get('users.posts.first');
     const directory = path.resolve('test-db/users/posts/first.json');
-    const data = fs.readFileSync(directory, 'UTF-8');
+    const data = JSON.parse(fs.readFileSync(directory, 'UTF-8'));
 
-    expect(result.data).toEqual(JSON.parse(data));
+    expect(result.data).toEqual(data);
     expect(result.valueType).toEqual(ValueType.FILE);
     expect(result.targetFile).toMatch(directory);
   });
@@ -65,18 +65,34 @@ describe('[VALUES]', () => {
   test('Pointers within a file', () => {
     const result = db.get('users.posts.first.title');
     const directory = path.resolve('test-db/users/posts/first.json');
-    const data = fs.readFileSync(directory, 'UTF-8');
+    const data = JSON.parse(fs.readFileSync(directory, 'UTF-8'));
 
-    expect(result.data).toEqual(JSON.parse(data).title);
+    expect(result.data).toEqual(data.title);
     expect(result.valueType).toEqual(ValueType.VALUE);
     expect(result.targetFile).toMatch(directory);
   });
 
   test('Navigating arrays', () => {
     const result = db.get('users.posts.first.links.0.name');
-    const data = fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8');
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
 
-    expect(result.data).toEqual(JSON.parse(data).links[0].name);
+    expect(result.data).toEqual(data.links[0].name);
+  });
+
+  test('Range selector and values', () => {
+    const result = db.get('users.posts.first.links.[1:3].name');
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+
+    expect(result.data).toEqual(['discord', 'twitter']);
+    expect(result.data).toEqual([data.links[1].name, data.links[2].name]);
+  });
+
+  test('Array selected values values', () => {
+    const result = db.get('users.posts.first.links.name');
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+
+    expect(result.data).toEqual(['google', 'discord', 'twitter']);
+    expect(result.data).toEqual(data.links.map(l => l.name));
   });
 
   test('Wrong value', () => {

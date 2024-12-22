@@ -13,7 +13,7 @@ describe('[CHANGE CASE]', () => {
 
     db.get('users.posts.first.title').changeCase(CaseFormat.LOWER);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.title).toEqual('hello world');
   });
 
@@ -22,7 +22,7 @@ describe('[CHANGE CASE]', () => {
 
     db.get('users.posts.first.title').changeCase(CaseFormat.UPPER);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.title).toEqual('HELLO WORLD');
   });
 
@@ -31,7 +31,7 @@ describe('[CHANGE CASE]', () => {
 
     db.get('users.posts.first.title').changeCase(CaseFormat.PASCAL);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.title).toEqual('Hello World');
   });
 
@@ -40,7 +40,7 @@ describe('[CHANGE CASE]', () => {
 
     db.get('users.posts.first.title').changeCase(CaseFormat.SNAKE);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.title).toEqual('hello_world');
   });
 
@@ -49,7 +49,7 @@ describe('[CHANGE CASE]', () => {
 
     db.get('users.posts.first.title').changeCase(CaseFormat.CAMEL);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.title).toEqual('helloWorld');
   });
 
@@ -58,7 +58,7 @@ describe('[CHANGE CASE]', () => {
 
     db.get('users.posts.first.title').changeCase(CaseFormat.KEBAB);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.title).toEqual('hello-world');
   });
 
@@ -67,7 +67,7 @@ describe('[CHANGE CASE]', () => {
 
     db.get('users.posts.first.title').changeCase(CaseFormat.FLAT);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.title).toEqual('helloworld');
   });
 
@@ -76,7 +76,7 @@ describe('[CHANGE CASE]', () => {
 
     db.get('users.posts.first.title').changeCase(CaseFormat.TRAIN);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.title).toEqual('Hello-World');
   });
 
@@ -88,7 +88,7 @@ describe('[CHANGE CASE]', () => {
 
     db.get('users.posts.first.title').changeCase(CaseFormat.SLUG);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.title).toEqual('mixed-case-title-and-trailing-whitespace-with-existing-hyphens-special-characters');
   });
 
@@ -97,7 +97,7 @@ describe('[CHANGE CASE]', () => {
 
     db.get('users.posts.first.title').changeCase(CaseFormat.REVERSE);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.title).toEqual('dlroW olleH');
   });
 
@@ -124,7 +124,7 @@ describe('[NORMALIZE CASE]', () => {
 
     db.get('users.posts.first.text').normalizeCase();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.text).toEqual('Hello world!!');
   });
 
@@ -133,7 +133,7 @@ describe('[NORMALIZE CASE]', () => {
 
     db.get('users.posts.first.text').normalizeCase();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.text).toEqual('Hello world');
   });
 
@@ -142,7 +142,7 @@ describe('[NORMALIZE CASE]', () => {
 
     db.get('users.posts.first.text').normalizeCase();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.text).toEqual('Hello world');
   });
 
@@ -151,7 +151,7 @@ describe('[NORMALIZE CASE]', () => {
 
     db.get('users.posts.first.text').normalizeCase();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.text).toEqual('Hello world');
   });
 
@@ -160,7 +160,7 @@ describe('[NORMALIZE CASE]', () => {
 
     db.get('users.posts.first.text').normalizeCase();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.text).toEqual('Hello world');
   });
 
@@ -169,7 +169,7 @@ describe('[NORMALIZE CASE]', () => {
 
     db.get('users.posts.first.text').normalizeCase();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.text).toEqual('Hello slug');
   });
 
@@ -178,7 +178,7 @@ describe('[NORMALIZE CASE]', () => {
 
     db.get('users.posts.first.text').normalizeCase();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.text).toEqual('Hello world');
   });
 
@@ -187,7 +187,7 @@ describe('[NORMALIZE CASE]', () => {
 
     db.get('users.posts.first.text').normalizeCase();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.text).toEqual('Hello world!!! & more text...');
   });
 
@@ -196,7 +196,7 @@ describe('[NORMALIZE CASE]', () => {
 
     db.get('users.posts.first.text').normalizeCase();
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.text).toEqual('');
   });
 

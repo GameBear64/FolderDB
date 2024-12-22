@@ -50,7 +50,7 @@ describe('[UPDATE]', () => {
 
     expect(result.data).toEqual(original.data + 2000);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.will_update_at).toEqual(result.data);
   });
 
@@ -60,7 +60,7 @@ describe('[UPDATE]', () => {
 
     expect(result.data).toEqual(original.data - 5000);
 
-    let data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.will_update_at).toEqual(result.data);
   });
 
