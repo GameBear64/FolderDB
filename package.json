@@ -13,7 +13,7 @@
     "test": "bun test",
     "dev": "bun --watch index.js",
     "build": "rollup -c",
-    "publish": "npm run build && npm publish --access=public"
+    "upload": "npm run build && npm publish --access=public"
   },
   "files": [
     "/dist"
@@ -34,8 +34,9 @@
   },
   "homepage": "https://github.com/GameBear64/FolderDB#readme",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.1",
-    "@rollup/plugin-node-resolve": "^15.3.0",
-    "rollup": "^4.27.2"
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "@rollup/plugin-node-resolve": "^15.3.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.29.1"
   }
 }
