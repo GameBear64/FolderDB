@@ -7,25 +7,30 @@ const db = new FolderDB({ dbPath: './db', mergeInstances: true });
 // console.log(db);
 
 // ====== FriendSchema.js file ======
-const a = db.get('users').schema({
-  name: {
-    type: String,
-    trim: true,
-    required: true,
+const a = db.get('users').schema(
+  {
+    name: {
+      type: String,
+      trim: true,
+      required: true,
+    },
+    sirName: {
+      type: String,
+      default: '',
+    },
+    password: {
+      type: String,
+      omit: true,
+    },
+    passport: {
+      type: String,
+      immutable: true,
+    },
+    items: { type: Array, populate: ['products.0', 'products.1', 'products.2'] },
+    // itemsMore: { type: Array, populate: ['products.0', 'products.1', 'products.2'] },
   },
-  sirName: {
-    type: String,
-    default: '',
-  },
-  password: {
-    type: String,
-    omit: true,
-  },
-  passport: {
-    type: String,
-    immutable: true,
-  },
-});
+  { timestamps: true }
+);
 
 // hooks must be before the events themselves
 // a.hook('pre-create', object => {
@@ -40,9 +45,7 @@ const a = db.get('users').schema({
 
 // console.log(a);
 
-const b = a.create('friend2', { name: 'GamBar  ' });
-
-const [, contents] = b;
+const [, contents] = a.create('friend2', { name: 'GamBar  ' });
 
 console.log('=>', contents);
 
@@ -57,5 +60,3 @@ console.log('=>', contents);
 // console.log(a.read('friend2', { omit: [] }));
 
 // console.log(db.get('friend').data);
-
-// TODO: test population

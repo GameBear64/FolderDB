@@ -25,6 +25,7 @@ function schema(blueprint, options = {}) {
     omit: Object.entries(blueprint)
       .filter(i => i[1]?.omit)
       .map(i => i[0]),
+    populate: Object.fromEntries(Object.entries(blueprint).filter(i => i[1]?.populate)),
     immutable: [
       'created_at',
       'updated_at',
@@ -78,6 +79,7 @@ function create(...args) {
   }
 
   this._createFile(name, object);
+  object = this._populateGet(name);
 
   this.eventManager.emit('post-create', object);
 
@@ -96,7 +98,7 @@ function read(value, options = { omit: this.schemaOptions.omit }) {
   const result = this._get(value);
 
   let resultData = null;
-  if (result.valueType !== ValueType.DIRECTORY) resultData = omit(this._get(value).data, options.omit);
+  if (result.valueType !== ValueType.DIRECTORY) resultData = omit(this._populateGet(value), options.omit);
 
   this.eventManager.emit('post-read', resultData);
 

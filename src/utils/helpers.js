@@ -157,10 +157,9 @@ function validateAndTransform(object) {
     if (object[key]) {
       object[key] = validateBlueprint(object[key], rules, key);
       object[key] = transformBlueprint(object[key], rules);
-    } else if (rules.hasOwnProperty('default')) {
-      object[key] = rules.default;
-    } else if (rules?.required) {
-      throw new Error(`Schema: ${key} is required.`);
+    } else {
+      const result = additiveTransform(rules);
+      if (result != undefined) object[key] = result;
     }
   }
 
@@ -220,4 +219,29 @@ function transformBlueprint(value, rules) {
   return value;
 }
 
-export { clone, dirNavigator, getFile, fileNavigator, traverseDir, traverseAndSet, validateAndTransform };
+function additiveTransform(rules) {
+  if (rules?.required) {
+    throw new Error(`Schema: ${key} is required.`);
+  }
+
+  let value;
+
+  // it could be false, check the property
+  if (rules.hasOwnProperty('default')) {
+    value = rules.default;
+  }
+
+  if (rules?.populate) {
+    value = rules.populate;
+  }
+
+  return value;
+}
+
+function populateGet(name) {
+  let object = this._get(name);
+  for (const key in this.schemaOptions.populate) object = object._populate(key);
+  return object.data;
+}
+
+export { clone, dirNavigator, getFile, fileNavigator, traverseDir, traverseAndSet, validateAndTransform, populateGet };

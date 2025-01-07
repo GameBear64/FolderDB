@@ -60,7 +60,7 @@ Blueprints provide the outline for your document. There are a number of options 
 | default    | Default value in case of absence                         |         |
 | immutable  | Weather this field can be updated                        | `false` |
 | omit       | Weather to include filed in returns from reads           |         |
-| populate   | String defining the field's relationship (auto populate) |         |
+| populate   | String defining the field's relationship (auto populate) (only in create and read) |
 ---
 
 ##### Validating options:
@@ -129,7 +129,7 @@ export default users;
 
 ### Hooks
 Hooks give us the ability to execute code before and after a schema operation
-There are `pre` and `post` hooks for every schema operation ([create](#create), [read](#read), [find](#find), [update](#update), [destroy](#destroy))
+There are `pre` and `post` hooks for every schema operation ([create](#create), [read](#read), [find](#find), [update](#update), [rename](#rename), [destroy](#destroy))
 
 Generally, `pre` hooks provide the argument as a prop and the returned value is used as the value used internally and `post` hooks provide either the result or nothing as a prop. More details will be provided below
 

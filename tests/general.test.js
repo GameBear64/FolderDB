@@ -28,13 +28,15 @@ describe('[POPULATE]', () => {
   });
 
   test('Error handling for non-array references', () => {
+    const old = JSON.parse(fs.readFileSync('./test-db/products.json', 'UTF-8'));
     fs.writeFileSync('./test-db/products.json', JSON.stringify({ id: 1, name: 'Product 1' }, null, 2));
 
     db.get('users.posts.first').populate('ref');
-
     const result = db.get('users.posts.first');
     // Did not populate
     expect(result.data.ref).toEqual('products.0');
+
+    fs.writeFileSync('./test-db/products.json', JSON.stringify(old, null, 2));
   });
 
   test('Error handling for value level population', () => {

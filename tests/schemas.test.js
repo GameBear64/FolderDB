@@ -19,6 +19,12 @@ const users = db.get('users').schema(
   { timestamps: true }
 );
 
+const populateUser = db.get('users').schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  items: { type: Array, populate: ['products.0', 'products.1', 'products.2'] },
+});
+
 beforeAll(() => {
   users.create('TestUser', {
     name: 'John Doe',
@@ -45,6 +51,13 @@ describe('[CREATE]', () => {
 
     expect(name).toHaveLength(20);
     expect(user).toMatchObject({ name: 'Valid User', email: 'valid@example.com', age: 30 });
+  });
+
+  test('Creating a document with populate', () => {
+    const [_, user] = populateUser.create({ name: 'Valid User', email: 'valid@example.com' });
+    const data = JSON.parse(fs.readFileSync('./test-db/products.json', 'UTF-8'));
+
+    expect(user.items).toMatchObject(data.slice(0, 3));
   });
 
   test('Creating a document and before hook', () => {
@@ -179,6 +192,14 @@ describe('[READ]', () => {
     expect(data).toMatchObject(result);
   });
 
+  test('Reading a document with populate', () => {
+    populateUser.create('populatedUser', { name: 'Valid User', email: 'valid@example.com' });
+    const result = populateUser.read('populatedUser');
+    const data = JSON.parse(fs.readFileSync('./test-db/products.json', 'UTF-8'));
+
+    expect(result.items).toMatchObject(data.slice(0, 3));
+  });
+
   test('Reading document and before hook', () => {
     const callback = mock();
     users.hook('pre-read', callback);
@@ -255,8 +276,6 @@ describe('[FIND]', () => {
     users.hook('post-find', callback);
     users.find({ age: 21 }, { first: true });
 
-    console.log(callback.mock.calls[0]);
-
     expect(callback).toHaveBeenCalledTimes(1);
     expect(callback).toHaveBeenCalledWith(
       expect.arrayContaining([
@@ -327,8 +346,6 @@ describe('[RENAME]', () => {
 
     users.rename('oldName', 'newName');
     expect(() => fs.readFileSync('./test-db/users/oldName.json', 'UTF-8')).toThrow();
-
-    console.log(fs.readdirSync('./test-db/users'));
 
     const newFile = JSON.parse(fs.readFileSync('./test-db/users/newName.json', 'UTF-8'));
     expect(newFile).toMatchObject(userObject);
