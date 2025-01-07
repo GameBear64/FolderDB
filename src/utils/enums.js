@@ -5,16 +5,18 @@ export const ValueType = Object.freeze({
 });
 
 export const CaseFormat = Object.freeze({
+  TITLE: Symbol('title'),
   LOWER: Symbol('lower'),
   UPPER: Symbol('upper'),
   PASCAL: Symbol('pascal'),
   SNAKE: Symbol('snake'),
+  DOT: Symbol('dot'),
   CAMEL: Symbol('camel'),
   KEBAB: Symbol('kebab'),
   FLAT: Symbol('flat'),
-  TRAIN: Symbol('train'),
   SLUG: Symbol('slug'),
   REVERSE: Symbol('reverse'),
+  ASCII: Symbol('ascii'),
 });
 
 export const TimeFormat = Object.freeze({

@@ -3,6 +3,7 @@ import path from 'path';
 
 import methods from '../methods/all.js';
 import * as helpers from './helpers.js';
+import { pick, transformCase } from './utilities.js';
 
 import { ValueType } from './enums.js';
 
@@ -147,4 +148,76 @@ const traverseAndSet = (current, keys, newValue) => {
   }
 };
 
-export { clone, dirNavigator, getFile, fileNavigator, traverseDir, traverseAndSet };
+function validateAndTransform(object) {
+  if (!this.blueprint) throw new Error('Cant use validateBlueprint() outside of schema');
+
+  for (const key in this.blueprint) {
+    const rules = this.blueprint[key];
+
+    if (object[key]) {
+      object[key] = validateBlueprint(object[key], rules, key);
+      object[key] = transformBlueprint(object[key], rules);
+    } else if (rules.hasOwnProperty('default')) {
+      object[key] = rules.default;
+    } else if (rules?.required) {
+      throw new Error(`Schema: ${key} is required.`);
+    }
+  }
+
+  const timestamps = this.schemaOptions?.timestamps ? ['created_at', 'updated_at'] : [];
+  return pick(object, [...Object.keys(this.blueprint), ...timestamps]);
+}
+
+function validateBlueprint(value, rules, key) {
+  if (rules?.type && typeof value !== rules.type.name.toLowerCase()) {
+    throw new Error(`Schema: ${key} must be of type ${rules.type.name}.`);
+  }
+
+  if (rules?.minLength && typeof value === 'string' && value.length < rules.minLength) {
+    throw new Error(`Schema: ${key} must have at least ${rules.minLength} characters.`);
+  }
+
+  if (rules?.maxLength && typeof value === 'string' && value.length > rules.maxLength) {
+    throw new Error(`Schema: ${key} must have at most ${rules.maxLength} characters.`);
+  }
+
+  if (rules?.min !== undefined && typeof value === 'number' && value < rules.min) {
+    throw new Error(`Schema: ${key} must be at least ${rules.min}.`);
+  }
+
+  if (rules?.max !== undefined && typeof value === 'number' && value > rules.max) {
+    throw new Error(`Schema: ${key} must be at most ${rules.max}.`);
+  }
+
+  if (rules?.enum && !rules.enum.includes(value)) {
+    throw new Error(`Schema: ${key} must be one of ${rules.enum.join(', ')}.`);
+  }
+
+  if (rules?.validate && typeof rules.validate === 'function') {
+    if (!rules.validate(value)) throw new Error(`Schema: ${key} does not satisfy custom validation rule.`);
+  }
+
+  return value;
+}
+
+function transformBlueprint(value, rules) {
+  if (rules?.trim && typeof value === 'string') {
+    value = value.trim();
+  }
+
+  if (rules?.innerTrim && typeof value === 'string') {
+    value = value.replace(/\s+/g, ' ').trim();
+  }
+
+  if (rules?.toCase && typeof value === 'string') {
+    value = transformCase(value, rules.toCase);
+  }
+
+  if (rules?.transform && typeof rules.transform === 'function') {
+    value = rules.transform(value);
+  }
+
+  return value;
+}
+
+export { clone, dirNavigator, getFile, fileNavigator, traverseDir, traverseAndSet, validateAndTransform };

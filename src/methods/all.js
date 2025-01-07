@@ -7,6 +7,7 @@ import * as objects from './data/objects.js';
 import * as arrays from './data/arrays.js';
 
 import * as general from './utils/general.js';
+import * as schema from './utils/schema.js';
 import * as time from './utils/time.js';
 
-export default { ...read, ...write, ...numbers, ...strings, ...arrays, ...objects, ...general, ...time };
+export default { ...read, ...write, ...numbers, ...strings, ...arrays, ...objects, ...general, ...schema, ...time };

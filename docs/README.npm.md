@@ -2,6 +2,12 @@
 
 > Filesystem based database focused on lightweight data storage and easy data preview
 
+![Coverage](https://img.shields.io/badge/coverage-%3E95%25-green)
+![Issues](https://img.shields.io/github/issues/GameBear64/FolderDB)
+![Stars](https://img.shields.io/github/stars/GameBear64/FolderDB?style=flat)
+
+![Made With Love](https://img.shields.io/badge/Made%20With-Love-red)
+
 **Build using [Bun](https://bun.sh/) on [Debian](https://www.debian.org/), published to [NPM](https://www.npmjs.com/package/@gambar/folder-db).**  
 *(should work on windows and node too)*
 

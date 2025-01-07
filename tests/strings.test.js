@@ -17,6 +17,15 @@ describe('[CHANGE CASE]', () => {
     expect(data.title).toEqual('hello world');
   });
 
+  test('Changing case to title', () => {
+    db.get('users.posts.first').set('title', 'Hello World');
+
+    db.get('users.posts.first.title').changeCase(CaseFormat.TITLE);
+
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.title).toEqual('Hello World');
+  });
+
   test('Changing case to upper', () => {
     db.get('users.posts.first').set('title', 'Hello World');
 
@@ -59,7 +68,7 @@ describe('[CHANGE CASE]', () => {
     db.get('users.posts.first.title').changeCase(CaseFormat.KEBAB);
 
     const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
-    expect(data.title).toEqual('hello-world');
+    expect(data.title).toEqual('Hello-World');
   });
 
   test('Changing case to Flat', () => {
@@ -69,15 +78,6 @@ describe('[CHANGE CASE]', () => {
 
     const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
     expect(data.title).toEqual('helloworld');
-  });
-
-  test('Changing case to Train', () => {
-    db.get('users.posts.first').set('title', 'Hello World');
-
-    db.get('users.posts.first.title').changeCase(CaseFormat.TRAIN);
-
-    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
-    expect(data.title).toEqual('Hello-World');
   });
 
   test('Changing case to Slug', () => {
@@ -101,6 +101,15 @@ describe('[CHANGE CASE]', () => {
     expect(data.title).toEqual('dlroW olleH');
   });
 
+  test('Changing case to Reverse', () => {
+    db.get('users.posts.first').set('title', 'Hello World 🎉');
+
+    db.get('users.posts.first.title').changeCase(CaseFormat.ASCII);
+
+    const data = JSON.parse(fs.readFileSync('./test-db/users/posts/first.json', 'UTF-8'));
+    expect(data.title).toEqual('Hello World');
+  });
+
   test('Error handling when changeCase is called with a non-string', () => {
     db.get('users.posts.first').set('tags', ['tag1', 'tag2']);
 
@@ -116,6 +125,8 @@ describe('[CHANGE CASE]', () => {
       db.get('users.posts.first.title').changeCase('UNSUPPORTED');
     }).toThrow('Unsupported case format.');
   });
+
+  // TODO: chaining mutations like title case -> kebab case
 });
 
 describe('[NORMALIZE CASE]', () => {

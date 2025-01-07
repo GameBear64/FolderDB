@@ -84,7 +84,10 @@ function rename(newName) {
   switch (this.valueType) {
     case ValueType.DIRECTORY:
     case ValueType.FILE:
-      fs.renameSync(this.targetFile, path.resolve(path.parse(this.targetFile).dir, newName));
+      fs.renameSync(
+        this.targetFile,
+        path.resolve(path.parse(this.targetFile).dir, newName + path.parse(this.targetFile).ext)
+      );
       break;
     case ValueType.VALUE:
       const file = JSON.parse(fs.readFileSync(this.targetFile, 'UTF-8'));

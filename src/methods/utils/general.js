@@ -1,5 +1,7 @@
 import { ValueType, TimeFormat } from '../../utils/enums.js';
 
+import { pick, omit } from '../../utils/utilities.js';
+
 // NOTE: General methods don't edit the value
 
 // ========= Utility ===========
@@ -120,7 +122,7 @@ function selectPick(desiredFields) {
   if (value !== Object(value)) throw new Error('selectPick() can only be used on objects.');
   if (!Array.isArray(desiredFields)) throw new Error('selectPick() needs an array with the desired fields');
 
-  this.data = Object.assign({}, ...desiredFields.map(field => ([field] in value ? { [field]: value[field] } : {})));
+  this.data = pick(value, desiredFields);
 
   return this;
 }
@@ -136,12 +138,7 @@ function selectOmit(fieldsToOmit) {
   if (value !== Object(value)) throw new Error('selectOmit() can only be used on objects.');
   if (!Array.isArray(fieldsToOmit)) throw new Error('selectOmit() needs an array with the fields to omit');
 
-  this.data = Object.assign(
-    {},
-    ...Object.keys(value)
-      .filter(key => !fieldsToOmit.includes(key))
-      .map(key => ({ [key]: value[key] }))
-  );
+  this.data = omit(value, fieldsToOmit);
 
   return this;
 }

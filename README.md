@@ -3,9 +3,11 @@
 > Filesystem based database focused on lightweight data storage and easy data preview
 
 ![NPM Version](https://img.shields.io/npm/v/%40gambar%2Ffolder-db)
-![Coverage](https://img.shields.io/badge/coverage-%3E95%25-green)
-![NPM Last Update](https://img.shields.io/npm/last-update/%40gambar%2Ffolder-db)
 ![NPM Downloads](https://img.shields.io/npm/d18m/%40gambar%2Ffolder-db)
+
+![Coverage](https://img.shields.io/badge/coverage-%3E95%25-green)
+![Issues](https://img.shields.io/github/issues/GameBear64/FolderDB)
+![Stars](https://img.shields.io/github/stars/GameBear64/FolderDB?style=flat)
 
 ![Made With Love](https://img.shields.io/badge/Made%20With-Love-red)
 
@@ -46,6 +48,7 @@ const db = new FolderDB({ dbPath: './db' });
 
 # Documentation
 
+- [**Class**](./docs/Class.md)
 - [**Read**](./docs/Read.md)
 - [**Write**](./docs/Write.md)
 ---

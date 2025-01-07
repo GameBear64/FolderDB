@@ -2,6 +2,11 @@ import path from 'path';
 import * as fs from 'fs';
 import { beforeAll, afterAll } from 'bun:test';
 
+import FolderDB from '../../src/index.js';
+
+// to create the relevant paths
+new FolderDB({ dbPath: './test-db', mergeInstances: true });
+
 const DBPath = path.resolve('./test-db');
 const ToolsPath = path.resolve('./tests/tools');
 

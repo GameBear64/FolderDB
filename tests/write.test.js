@@ -159,7 +159,7 @@ describe('[RENAME]', () => {
     db.get('users').createFile('renameFile');
     db.get('users.renameFile').rename('renamedFile');
 
-    expect(!!fs.existsSync('./test-db/users/renamedFile')).toEqual(true);
+    expect(!!fs.existsSync('./test-db/users/renamedFile.json')).toEqual(true);
   });
 
   test('Renaming a folder', () => {

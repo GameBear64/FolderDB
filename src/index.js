@@ -1,7 +1,7 @@
 import path from 'path';
 import * as fs from 'fs';
 
-import TaskQueue from './utils/queue.js';
+import TaskQueue from './utils/Queue.js';
 import methods from './methods/all.js';
 import * as helpers from './utils/helpers.js';
 
@@ -14,6 +14,7 @@ class FolderDB {
    * @param {boolean} [options.mergeInstances=false] - If true, merges this instance with any existing instance.
    */
   constructor(options) {
+    // TODO: add check for dbPath, if dbPath is different, allow new instance
     if (FolderDB._instance && !options.mergeInstances) {
       throw new Error('Only one instance allowed!');
     }

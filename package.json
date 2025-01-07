@@ -1,6 +1,6 @@
 {
   "name": "@gambar/folder-db",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "Simple json based database solution.",
   "type": "module",
   "main": "dist/index.cjs",
@@ -34,7 +34,7 @@
     "no-server"
   ],
   "author": "GamBar",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/GameBear64/FolderDB/issues"
   },

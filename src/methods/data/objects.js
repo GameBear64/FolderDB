@@ -1,3 +1,5 @@
+import { pick as _pick, omit as _omit } from '../../utils/utilities.js';
+
 /**
  * Merges the properties of the given object with the current object.
  * If there are overlapping properties, the values from the given object will overwrite those in the current object.
@@ -26,7 +28,7 @@ function pick(desiredFields) {
   if (value !== Object(value)) throw new Error('pick() can only be used on objects.');
   if (!Array.isArray(desiredFields)) throw new Error('pick() needs an array with the desired fields');
 
-  this._set(Object.assign({}, ...desiredFields.map(field => ([field] in value ? { [field]: value[field] } : {}))));
+  this._set(_pick(value, desiredFields));
 
   return this;
 }
@@ -43,14 +45,7 @@ function omit(fieldsToOmit) {
   if (value !== Object(value)) throw new Error('omit() can only be used on objects.');
   if (!Array.isArray(fieldsToOmit)) throw new Error('omit() needs an array with the fields to omit');
 
-  this._set(
-    Object.assign(
-      {},
-      ...Object.keys(value)
-        .filter(key => !fieldsToOmit.includes(key))
-        .map(key => ({ [key]: value[key] }))
-    )
-  );
+  this._set(_omit(value, fieldsToOmit));
 
   return this;
 }
