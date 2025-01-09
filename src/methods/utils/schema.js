@@ -125,9 +125,12 @@ function find(query, options = {}) {
 
     let isMatch = false;
     if (typeof query === 'object') {
-      isMatch = Object.keys(query).every(key => fileData[key] === query[key]);
+      isMatch = Object.keys(query).every(key => fileData?.[key] === query[key]);
     } else if (typeof query === 'function') {
-      isMatch = query(fileData);
+      // NOTE: so we don't need optional chaining (user?.age)
+      try {
+        isMatch = query(fileData);
+      } catch (e) {}
     }
 
     if (isMatch) {
@@ -135,7 +138,7 @@ function find(query, options = {}) {
 
       if (first) {
         result = Object.entries(result[0])[0];
-        // consistent with create method
+        // NOTE: consistent with create method
         break;
       }
     }

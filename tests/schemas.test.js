@@ -10,6 +10,7 @@ const users = db.get('users').schema(
     name: { type: String, required: true, minLength: 3, maxLength: 50, trim: true },
     email: { type: String, required: true, immutable: true, validate: val => /.+@.+\..+/.test(val) },
     password: { type: String, omit: true },
+    phone: { type: [String, Number], omit: true },
     age: { type: Number, min: 18, max: 120 },
     bio: { type: String, innerTrim: true, maxLength: 60, minLength: 10 },
     preferences: { type: String, default: 'none', enum: ['none', 'basic', 'advanced'] },
@@ -307,6 +308,16 @@ describe('[UPDATE]', () => {
     const result = users.update('TestUser', { created_at: 1234567891234 });
 
     expect(result).toBe(null);
+  });
+
+  test('Updating a document with a multi type value', () => {
+    let result = users.update('TestUser', { phone: 123456789 });
+    expect(typeof result.phone).toBe('number');
+
+    result = users.update('TestUser', { phone: '+359899696969' });
+    expect(typeof result.phone).toBe('string');
+
+    expect(() => users.update('TestUser', { phone: true })).toThrow();
   });
 
   test('Updating document and before hook', () => {

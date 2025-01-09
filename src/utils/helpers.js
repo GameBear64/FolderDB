@@ -168,8 +168,11 @@ function validateAndTransform(object) {
 }
 
 function validateBlueprint(value, rules, key) {
-  if (rules?.type && typeof value !== rules.type.name.toLowerCase()) {
-    throw new Error(`Schema: ${key} must be of type ${rules.type.name}.`);
+  if (rules?.type) {
+    const types = Array.isArray(rules.type) ? rules.type : [rules.type];
+    if (!types.some(type => typeof value === type.name.toLowerCase())) {
+      throw new Error(`Schema: ${key} must be of type ${types.map(t => t.name).join(' or ')}.`);
+    }
   }
 
   if (rules?.minLength && typeof value === 'string' && value.length < rules.minLength) {
