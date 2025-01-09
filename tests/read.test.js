@@ -40,11 +40,18 @@ describe('[FILES]', () => {
   test('Navigating to a file', () => {
     const result = db.get('users.posts.first');
     const directory = path.resolve('test-db/users/posts/first.json');
-    const data = JSON.parse(fs.readFileSync(directory, 'UTF-8'));
+    const data = JSON.parse(fs.readFileSync(path.resolve('test-db/users/posts/first.json'), 'UTF-8'));
 
     expect(result.data).toEqual(data);
     expect(result.valueType).toEqual(ValueType.FILE);
     expect(result.targetFile).toMatch(directory);
+  });
+
+  test('Navigating to a file multiple gets', () => {
+    const data = JSON.parse(fs.readFileSync(path.resolve('test-db/users/posts/first.json'), 'UTF-8'));
+    const result = db.get('users.posts').get('first');
+
+    expect(result.data).toEqual(data);
   });
 
   test('Reading an image', () => {
@@ -55,8 +62,14 @@ describe('[FILES]', () => {
     expect(result.data).toEqual({ buffer: data, name: 'airplane', ext: '.jpg' });
   });
 
-  test('Wrong file', () => {
+  test('Navigating to a non-existent file', () => {
     const result = db.get('users.posts.nothing');
+    expect(result.data).toEqual(null);
+  });
+
+  test('Navigating to a non-existent file multiple gets', () => {
+    const result = db.get('users.posts').get('doesNotExist');
+
     expect(result.data).toEqual(null);
   });
 });

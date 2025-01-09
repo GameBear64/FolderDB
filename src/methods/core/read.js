@@ -17,6 +17,7 @@ function get(value) {
 
   const clone = this._clone();
   clone.pointers = [...clone.pointers, ...value.split('.').filter(p => p !== '')];
+  clone.data = null;
 
   clone._dirNavigator();
   clone._getFile();
