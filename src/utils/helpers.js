@@ -158,7 +158,7 @@ function validateAndTransform(object) {
       object[key] = validateBlueprint(object[key], rules, key);
       object[key] = transformBlueprint(object[key], rules);
     } else {
-      const result = additiveTransform(rules);
+      const result = additiveTransform(rules, key);
       if (result != undefined) object[key] = result;
     }
   }
@@ -222,7 +222,7 @@ function transformBlueprint(value, rules) {
   return value;
 }
 
-function additiveTransform(rules) {
+function additiveTransform(rules, key) {
   if (rules?.required) {
     throw new Error(`Schema: ${key} is required.`);
   }
