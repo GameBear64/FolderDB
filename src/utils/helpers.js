@@ -243,7 +243,9 @@ function additiveTransform(rules, key) {
 
 function populateGet(name) {
   let object = this._get(name);
-  for (const key in this.schemaOptions.populate) object = object._populate(key);
+  for (const key in this.schemaOptions.populate) {
+    if (object.data.hasOwnProperty(key)) object = object._populate(key);
+  }
   return object.data;
 }
 

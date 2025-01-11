@@ -67,7 +67,7 @@ function hook(event, callback) {
  * @throws {Error} If file name contains dots.
  */
 function create(...args) {
-  let [name = generateRandomId(this.schemaOptions?.id), object] = parseOptionalParams(args, 2);
+  let [name = generateRandomId(this.schemaOptions?.idLength), object] = parseOptionalParams(args, 2);
   if (name.includes('.')) throw new Error('File name should not contain dots.');
 
   object = this.eventManager.emit('pre-create', object) || object;
@@ -76,6 +76,10 @@ function create(...args) {
   if (this.schemaOptions?.timestamps) {
     object.created_at = new Date().getTime();
     object.updated_at = new Date().getTime();
+  }
+
+  if (this.schemaOptions.namePrefix) {
+    name = this.schemaOptions?.namePrefix + name;
   }
 
   this._createFile(name, object);
