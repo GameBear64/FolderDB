@@ -229,7 +229,7 @@ function additiveTransform(rules, key) {
 
   let value;
 
-  // it could be false, check the property
+  // it could be false, check by property
   if (rules.hasOwnProperty('default')) {
     value = rules.default;
   }

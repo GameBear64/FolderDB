@@ -235,21 +235,25 @@ describe('[FIND]', () => {
   test('Finding documents by query', () => {
     const results = users.find({ age: 21 });
 
-    expect(results.length).toBeGreaterThan(0);
-    expect(Object.values(results[0])[0].age).toBe(21);
+    const entries = Object.entries(results);
+
+    expect(entries.length).toBeGreaterThan(0);
+    expect(entries[0][1].age).toBe(21);
   });
 
   test('Finding documents by function', () => {
     const results = users.find(u => u.age == 21);
 
-    expect(results.length).toBeGreaterThan(0);
-    expect(Object.values(results[0])[0].age).toBe(21);
+    const entries = Object.entries(results);
+
+    expect(entries.length).toBeGreaterThan(0);
+    expect(entries[0][1].age).toBe(21);
   });
 
   test('Not finding a document', () => {
     const results = users.find(u => u.age == 9999999);
 
-    expect(results.length).toBe(0);
+    expect(Object.entries(results).length).toBe(0);
   });
 
   test('Finding a single document', () => {
@@ -260,7 +264,7 @@ describe('[FIND]', () => {
   test('Not finding a single document', () => {
     const result = users.find({ age: 9999999 }, { first: true });
 
-    expect(result.length).toBe(0);
+    expect(Object.entries(result).length).toBe(0);
   });
 
   test('Finding document and before hook', () => {

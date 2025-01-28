@@ -45,12 +45,12 @@ const a = db.get('users').schema(
 
 // console.log(a);
 
-const [, contents] = a.create('friend2', { name: 'GamBar  ' });
+// const [, contents] = a.create('friend2', { name: 'GamBar  ' });
 
-console.log('=>', contents);
+// console.log('=>', contents);
 
 // a.read('friend');
-// console.log(a.find(o => o.name.toLowerCase() == 'gambar'));
+console.log(a.find(o => o.name.toLowerCase() == 'gambar'));
 // console.log(a.find({ name: 'gambar' }));
 
 // a.update('friend2', { password: 'hello mom' });

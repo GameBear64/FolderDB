@@ -121,7 +121,7 @@ function find(query, options = {}) {
 
   this._dirNavigator();
   const files = fs.readdirSync(this.targetFile);
-  let result = [];
+  let result = {};
 
   for (const file of files) {
     const fileName = path.parse(file).name;
@@ -138,10 +138,10 @@ function find(query, options = {}) {
     }
 
     if (isMatch) {
-      result.push({ [fileName]: omit(fileData, omitOption) });
+      result[fileName] = omit(fileData, omitOption);
 
       if (first) {
-        result = Object.entries(result[0])[0];
+        result = Object.entries(result)[0];
         // NOTE: consistent with create method
         break;
       }
@@ -175,6 +175,8 @@ function update(...args) {
   let newValue = { ...target.data, ...value };
 
   if (this.schemaOptions?.timestamps) {
+    // TODO: allow certain keys to not update timestamp
+    // for example in the blueprint -> silent: true
     newValue.updated_at = new Date().getTime();
   }
 
