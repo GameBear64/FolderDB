@@ -1,9 +1,8 @@
 import path from 'path';
 import * as fs from 'fs';
 
-import TaskQueue from './utils/Queue.js';
 import methods from './methods/all.js';
-import * as helpers from './utils/helpers.js';
+import helpers, { TaskQueue } from './utils/all.js';
 
 import * as e from './utils/enums.js';
 

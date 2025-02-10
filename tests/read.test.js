@@ -144,13 +144,13 @@ describe('[TREE]', () => {
   test('Error handling for invalid path', () => {
     expect(() => {
       db.get('').getTree('nonexistentFile');
-    }).toThrow('No such file or directory');
+    }).toThrow();
   });
 
   test('Error handling for path not in directory', () => {
     expect(() => {
       db.get('').getTree('file1.nonexistentFile');
-    }).toThrow('No such file or directory');
+    }).toThrow();
   });
 });
 

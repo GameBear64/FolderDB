@@ -1,6 +1,5 @@
 import { describe, test, expect, mock, beforeEach } from 'bun:test';
-import EventManager from '../src/utils/EventManager';
-import TaskQueue from '../src/utils/Queue';
+import { EventManager, TaskQueue } from '../src/utils/all.js';
 
 describe('EVENT MANAGER', () => {
   let eventManager;

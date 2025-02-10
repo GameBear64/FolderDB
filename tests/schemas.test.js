@@ -26,6 +26,15 @@ const populateUser = db.get('users').schema({
   items: { type: Array, populate: ['products.0', 'products.1', 'products.2'] },
 });
 
+const idUser = db.get('users').schema(
+  {
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    age: { type: Number },
+  },
+  { idLength: 50, inlineId: true, namePrefix: 'usr-' }
+);
+
 beforeAll(() => {
   users.create('TestUser', {
     name: 'John Doe',
@@ -61,6 +70,14 @@ describe('[CREATE]', () => {
     expect(user.items).toMatchObject(data.slice(0, 3));
   });
 
+  test('Creating a document with inline ID', () => {
+    const user = idUser.create({ name: 'Valid User', email: 'valid@example.com', age: 30 });
+
+    expect(user._id).toHaveLength(50);
+    expect(user._id).toMatch(/^usr-/);
+    expect(user).toMatchObject({ name: 'Valid User', email: 'valid@example.com', age: 30 });
+  });
+
   test('Creating a document and before hook', () => {
     const callback = mock();
     users.hook('pre-create', callback);
@@ -82,12 +99,14 @@ describe('[CREATE]', () => {
 
     expect(callback).toHaveBeenCalledTimes(1);
     expect(callback).toHaveBeenCalledWith(
-      expect.objectContaining({
-        name: 'Valid User',
-        email: 'valid@example.com',
-        age: 30,
-        preferences: 'none',
-      })
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: 'Valid User',
+          email: 'valid@example.com',
+          age: 30,
+          preferences: 'none',
+        }),
+      ])
     );
   });
 
@@ -162,7 +181,7 @@ describe('[CREATE - BPs]', () => {
 
   test('Validating email format', () => {
     expect(() => {
-      users.create({ name: 'Invalid Email', email: 'invalidemail', age: 30 });
+      users.create({ name: 'Invalid Email', email: 'invalid-email', age: 30 });
     }).toThrow();
   });
 

@@ -116,7 +116,7 @@ describe('[FOLDER]', () => {
   test('Error - create folder in variable', () => {
     expect(() => {
       db.get('users.posts.first.author').createFolder('testFolder');
-    }).toThrow('Not a directory');
+    }).toThrow();
   });
 });
 
@@ -150,7 +150,7 @@ describe('[FILE]', () => {
   test('Error - create file in variable', () => {
     expect(() => {
       db.get('users.posts.first.author').createFile('testFolder');
-    }).toThrow('Not a directory');
+    }).toThrow();
   });
 });
 

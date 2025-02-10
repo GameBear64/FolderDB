@@ -3,7 +3,8 @@ import path from 'path';
 
 import { ValueType } from '../../utils/enums.js';
 import { parseOptionalParams, generateRandomId, omit } from '../../utils/utilities.js';
-import EventManager from '../../utils/EventManager.js';
+// NOTE: import from here, avoid circular dependency
+import EventManager from '../../utils/structures/EventManager.js';
 
 /**
  * Defines a schema for data validation and transformation.
@@ -67,7 +68,13 @@ function hook(event, callback) {
  * @throws {Error} If file name contains dots.
  */
 function create(...args) {
-  let [name = generateRandomId(this.schemaOptions?.idLength), object] = parseOptionalParams(args, 2);
+  let [name, object] = parseOptionalParams(args, 2);
+
+  if (!name) {
+    let randomIdLength = this.schemaOptions?.idLength - (this.schemaOptions?.namePrefix?.length || 0);
+    name = generateRandomId(randomIdLength || 20);
+  }
+
   if (name.includes('.')) throw new Error('File name should not contain dots.');
 
   object = this.eventManager.emit('pre-create', object) || object;
@@ -84,10 +91,11 @@ function create(...args) {
 
   this._createFile(name, object);
   object = this._populateGet(name);
+  object = this._returnFormatter(name, object);
 
   this.eventManager.emit('post-create', object);
 
-  return [name, object];
+  return object;
 }
 
 /**
@@ -103,6 +111,8 @@ function read(value, options = { omit: this.schemaOptions.omit }) {
 
   let resultData = null;
   if (result.valueType !== ValueType.DIRECTORY) resultData = omit(this._populateGet(value), options.omit);
+
+  resultData = this._returnFormatter(resultData);
 
   this.eventManager.emit('post-read', resultData);
 
@@ -121,7 +131,7 @@ function find(query, options = {}) {
 
   this._dirNavigator();
   const files = fs.readdirSync(this.targetFile);
-  let result = {};
+  let result = [];
 
   for (const file of files) {
     const fileName = path.parse(file).name;
@@ -138,15 +148,22 @@ function find(query, options = {}) {
     }
 
     if (isMatch) {
-      result[fileName] = omit(fileData, omitOption);
+      result.push(this._returnFormatter(fileName, omit(fileData, omitOption)));
 
       if (first) {
-        result = Object.entries(result)[0];
+        result = result[0];
         // NOTE: consistent with create method
         break;
       }
     }
   }
+
+  // supporting 2 formatting types requires this :/
+  if (Array.isArray(result) && !this.schemaOptions?.inlineId && !first) {
+    result = Object.fromEntries(result);
+  }
+
+  // TODO: unit tests for second format type in all methods
 
   this.eventManager.emit('post-find', result);
 
@@ -183,13 +200,15 @@ function update(...args) {
   newValue = this._validateAndTransform(newValue);
   target._set(newValue);
 
+  newValue = this._returnFormatter(newValue);
+
   this.eventManager.emit('post-update', newValue);
 
   return newValue;
 }
 
 /**
- * Renames an existing entity by emitting pre-rename and post-rename events.
+ * Renames a document.
  *
  * @param {string} oldName - The current name of the entity to be renamed.
  * @param {string} newName - The new name to assign to the entity.
@@ -211,8 +230,10 @@ function destroy(target) {
   const document = this._get(target);
 
   this.eventManager.emit('pre-destroy', target);
+
   document.remove();
-  this.eventManager.emit('post-destroy', document.data);
+
+  this.eventManager.emit('post-destroy', document.data); // no return formatting
 }
 
 export { schema };

@@ -24,7 +24,7 @@ function convertBase(value, toBase) {
   return newValue || 0;
 }
 
-function generateRandomId({ length } = { length: 20 }) {
+function generateRandomId(length = 20) {
   const timestamp = convertBase(Math.floor(new Date().getTime() / 1000), 62);
 
   const random = Array.from(
