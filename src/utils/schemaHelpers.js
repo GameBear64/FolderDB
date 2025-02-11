@@ -7,7 +7,7 @@ function validateAndTransform(object) {
     const rules = this.blueprint[key];
 
     if (object[key]) {
-      object[key] = validateBlueprint(object[key], rules, key);
+      object[key] = validateBlueprint.bind(this)(object[key], rules, key);
       object[key] = transformBlueprint(object[key], rules);
     } else {
       const result = additiveTransform(rules, key);
@@ -22,7 +22,11 @@ function validateAndTransform(object) {
 function validateBlueprint(value, rules, key) {
   if (rules?.type) {
     const types = Array.isArray(rules.type) ? rules.type : [rules.type];
-    if (!types.some(type => typeof value === type.name.toLowerCase())) {
+
+    const isValidType = (value, type) =>
+      (type === Array && Array.isArray(value)) || typeof value === type.name.toLowerCase();
+
+    if (!types.some(type => isValidType(value, type))) {
       throw new Error(`Schema: ${key} must be of type ${types.map(t => t.name).join(' or ')}.`);
     }
   }
@@ -86,17 +90,18 @@ function additiveTransform(rules, key) {
     value = rules.default;
   }
 
-  if (rules?.populate) {
-    value = rules.populate;
-  }
-
   return value;
 }
 
 function populateGet(name) {
   let object = this._get(name);
   for (const key in this.schemaOptions.populate) {
-    if (object.data.hasOwnProperty(key)) object = object._populate(key);
+    try {
+      if (object.data.hasOwnProperty(key)) object = object._populate(key);
+    } catch (error) {
+      /* silent fail */
+      object.data[key] = null;
+    }
   }
   return object.data;
 }

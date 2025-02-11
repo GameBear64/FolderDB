@@ -7,7 +7,7 @@ const db = new FolderDB({ dbPath: './db', mergeInstances: true });
 // console.log(db);
 
 // ====== FriendSchema.js file ======
-const a = db.get('users').schema(
+const userSchema = db.get('users').schema(
   {
     name: {
       type: String,
@@ -26,37 +26,46 @@ const a = db.get('users').schema(
       type: String,
       immutable: true,
     },
-    items: { type: Array, populate: ['products.0', 'products.1', 'products.2'] },
-    // itemsMore: { type: Array, populate: ['products.0', 'products.1', 'products.2'] },
+    bookings: {
+      type: String,
+      populate: true,
+    },
+    items: { type: Array, populate: true },
+    passwordChangedAt: {
+      type: Number,
+      default: 0,
+    },
   },
-  { timestamps: true }
+  { timestamps: true, inlineId: true }
 );
 
-// hooks must be before the events themselves
-// a.hook('pre-create', object => {
-//   object.sirName = 'Bardon';
-//   return object;
-// });
-// a.hook(['post-create', 'post-update'], o => console.log('create/update - ', o.name));
+userSchema.hook(['pre-create', 'pre-update'], user => {
+  if (user.hasOwnProperty('password')) {
+    user.password = 'secure-' + user.password;
+    user.passwordChangedAt = Date.now() - 1000;
+  }
 
-// return schema;
+  return user;
+});
 
 // ==== End of file =====
 
 // console.log(a);
 
-// const [, contents] = a.create('friend2', { name: 'GamBar  ' });
+const contents = userSchema.create('friend2', {
+  name: 'GamBar  ',
+  // bookings: 'products.1.name',
+  bookings: 'gghj',
+  password: 'secret',
+  items: ['products.0', 'products.1', 'products.2'],
+});
+
+userSchema.update('friend2', { password: 'new-password' });
 
 // console.log('=>', contents);
 
 // a.read('friend');
-console.log(a.find(o => o.name.toLowerCase() == 'gambar'));
-// console.log(a.find({ name: 'gambar' }));
 
-// a.update('friend2', { password: 'hello mom' });
+const userFile = userSchema.find(u => u.name == 'GamBar!', { first: true });
 
-// a.update('friend2', { password: 'hello mom!!!!' });
-
-// console.log(a.read('friend2', { omit: [] }));
-
-// console.log(db.get('friend').data);
+console.log(userFile);

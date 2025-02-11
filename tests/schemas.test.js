@@ -23,7 +23,7 @@ const users = db.get('users').schema(
 const populateUser = db.get('users').schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
-  items: { type: Array, populate: ['products.0', 'products.1', 'products.2'] },
+  items: { type: Array, populate: true },
 });
 
 const idUser = db.get('users').schema(
@@ -64,7 +64,11 @@ describe('[CREATE]', () => {
   });
 
   test('Creating a document with populate', () => {
-    const [_, user] = populateUser.create({ name: 'Valid User', email: 'valid@example.com' });
+    const [_, user] = populateUser.create({
+      name: 'Valid User',
+      email: 'valid@example.com',
+      items: ['products.0', 'products.1', 'products.2'],
+    });
     const data = JSON.parse(fs.readFileSync('./test-db/products.json', 'UTF-8'));
 
     expect(user.items).toMatchObject(data.slice(0, 3));
@@ -213,7 +217,11 @@ describe('[READ]', () => {
   });
 
   test('Reading a document with populate', () => {
-    populateUser.create('populatedUser', { name: 'Valid User', email: 'valid@example.com' });
+    populateUser.create('populatedUser', {
+      name: 'Valid User',
+      email: 'valid@example.com',
+      items: ['products.0', 'products.1', 'products.2'],
+    });
     const result = populateUser.read('populatedUser');
     const data = JSON.parse(fs.readFileSync('./test-db/products.json', 'UTF-8'));
 
