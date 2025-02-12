@@ -16,7 +16,7 @@ function populate(location) {
     throw new Error('You can only populate at the value level.');
   }
 
-  const pointers = location.split('.').filter(p => p !== '');
+  const pointers = location.split('.').filter((p) => p !== '');
   let current = this.data;
 
   for (const key of pointers) {
@@ -32,7 +32,7 @@ function populate(location) {
   if (!Array.isArray(current)) {
     this.data[pointers] = clone._getTree(current);
   } else {
-    this.data[pointers] = current.map(item => clone._getTree(item));
+    this.data[pointers] = current.map((item) => clone._getTree(item));
   }
 
   return this;
@@ -55,7 +55,8 @@ function dump() {
  * @throws {Error} Throws an error if the callback is not a function.
  */
 function tap(callback) {
-  if (typeof callback !== 'function') throw new Error('You must provide a function to tap().');
+  if (typeof callback !== 'function')
+    throw new Error('You must provide a function to tap().');
   callback(this.data);
   return this;
 }
@@ -88,11 +89,14 @@ function average() {
 function sample(count = 1) {
   const array = this.data;
 
-  if (!Array.isArray(array) || array.length === 0) throw new Error('Input must be a non-empty array.');
+  if (!Array.isArray(array) || array.length === 0)
+    throw new Error('Input must be a non-empty array.');
 
-  if (typeof count !== 'number' || count <= 0) throw new Error('Count must be a positive number.');
+  if (typeof count !== 'number' || count <= 0)
+    throw new Error('Count must be a positive number.');
 
-  if (count > array.length) throw new Error('Count cannot be greater than the length of the array.');
+  if (count > array.length)
+    throw new Error('Count cannot be greater than the length of the array.');
 
   const getRandomElements = (arr, num) => {
     const result = [];
@@ -106,7 +110,10 @@ function sample(count = 1) {
     return result;
   };
 
-  this.data = count === 1 ? getRandomElements(array, 1)[0] : getRandomElements(array, count);
+  this.data =
+    count === 1
+      ? getRandomElements(array, 1)[0]
+      : getRandomElements(array, count);
   return this;
 }
 
@@ -119,8 +126,10 @@ function sample(count = 1) {
  */
 function selectPick(desiredFields) {
   let value = this.data;
-  if (value !== Object(value)) throw new Error('selectPick() can only be used on objects.');
-  if (!Array.isArray(desiredFields)) throw new Error('selectPick() needs an array with the desired fields');
+  if (value !== Object(value))
+    throw new Error('selectPick() can only be used on objects.');
+  if (!Array.isArray(desiredFields))
+    throw new Error('selectPick() needs an array with the desired fields');
 
   this.data = pick(value, desiredFields);
 
@@ -135,8 +144,10 @@ function selectPick(desiredFields) {
  */
 function selectOmit(fieldsToOmit) {
   let value = this.data;
-  if (value !== Object(value)) throw new Error('selectOmit() can only be used on objects.');
-  if (!Array.isArray(fieldsToOmit)) throw new Error('selectOmit() needs an array with the fields to omit');
+  if (value !== Object(value))
+    throw new Error('selectOmit() can only be used on objects.');
+  if (!Array.isArray(fieldsToOmit))
+    throw new Error('selectOmit() needs an array with the fields to omit');
 
   this.data = omit(value, fieldsToOmit);
 
@@ -153,7 +164,9 @@ function isPast() {
   const value = Number(this.data);
 
   if (!value) {
-    throw new Error('This method can only be used on numbers representing timestamps');
+    throw new Error(
+      'This method can only be used on numbers representing timestamps'
+    );
   }
 
   return new Date().getTime() > value;
@@ -247,4 +260,15 @@ function formatRelativeTime() {
   return rtf.format(0, 'second');
 }
 
-export { populate, dump, tap, average, sample, selectPick, selectOmit, isPast, formatTimestamp, formatRelativeTime };
+export {
+  populate,
+  dump,
+  tap,
+  average,
+  sample,
+  selectPick,
+  selectOmit,
+  isPast,
+  formatTimestamp,
+  formatRelativeTime,
+};

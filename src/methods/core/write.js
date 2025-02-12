@@ -10,8 +10,9 @@ import path from 'path';
  * @returns {Object} The current instance for chaining.
  */
 function createFolder(name) {
-  this.targetFile = fs.mkdirSync(path.resolve(this.targetFile, name), { recursive: true });
-
+  this.targetFile = fs.mkdirSync(path.resolve(this.targetFile, name), {
+    recursive: true,
+  });
   return this;
 }
 
@@ -33,9 +34,14 @@ function createFile(name, buffer) {
     fs.mkdirSync(dirPath, { recursive: true });
   }
 
-  const filePath = details.ext ? path.resolve(dirPath, details.base) : path.resolve(dirPath, details.name + '.json');
+  const filePath = details.ext
+    ? path.resolve(dirPath, details.base)
+    : path.resolve(dirPath, details.name + '.json');
 
-  fs.writeFileSync(filePath, details.ext ? buffer : JSON.stringify(buffer || {}, null, 2));
+  fs.writeFileSync(
+    filePath,
+    details.ext ? buffer : JSON.stringify(buffer || {}, null, 2)
+  );
   return this;
 }
 
@@ -57,7 +63,9 @@ function set(_key, _value) {
   let pointers = this.pointers;
 
   if (_value !== undefined) {
-    const extraPointers = _key.includes('.') ? _key.split('.').filter(Boolean) : [_key];
+    const extraPointers = _key.includes('.')
+      ? _key.split('.').filter(Boolean)
+      : [_key];
     pointers = [...pointers, ...extraPointers];
   }
 
@@ -86,7 +94,10 @@ function rename(newName) {
     case ValueType.FILE:
       fs.renameSync(
         this.targetFile,
-        path.resolve(path.parse(this.targetFile).dir, newName + path.parse(this.targetFile).ext)
+        path.resolve(
+          path.parse(this.targetFile).dir,
+          newName + path.parse(this.targetFile).ext
+        )
       );
       break;
     case ValueType.VALUE:

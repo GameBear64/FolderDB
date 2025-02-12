@@ -2,7 +2,11 @@ import * as fs from 'fs';
 import path from 'path';
 
 import { ValueType } from '../../utils/enums.js';
-import { parseOptionalParams, generateRandomId, omit } from '../../utils/utilities.js';
+import {
+  parseOptionalParams,
+  generateRandomId,
+  omit,
+} from '../../utils/utilities.js';
 import EventManager from '../../utils/EventManager.js';
 
 /**
@@ -14,7 +18,8 @@ import EventManager from '../../utils/EventManager.js';
  */
 function schema(blueprint, options = {}) {
   if (this.valueType != ValueType.DIRECTORY) throw new Error('Not a folder');
-  if (!options || !blueprint) throw new Error('Options and blueprint are required.');
+  if (!options || !blueprint)
+    throw new Error('Options and blueprint are required.');
 
   const clone = this._clone();
 
@@ -23,15 +28,17 @@ function schema(blueprint, options = {}) {
   clone.schemaOptions = {
     ...options,
     omit: Object.entries(blueprint)
-      .filter(i => i[1]?.omit)
-      .map(i => i[0]),
-    populate: Object.fromEntries(Object.entries(blueprint).filter(i => i[1]?.populate)),
+      .filter((i) => i[1]?.omit)
+      .map((i) => i[0]),
+    populate: Object.fromEntries(
+      Object.entries(blueprint).filter((i) => i[1]?.populate)
+    ),
     immutable: [
       'created_at',
       'updated_at',
       ...Object.entries(blueprint)
-        .filter(i => i[1]?.immutable)
-        .map(i => i[0]),
+        .filter((i) => i[1]?.immutable)
+        .map((i) => i[0]),
     ],
   };
 
@@ -54,7 +61,7 @@ function schema(blueprint, options = {}) {
  */
 function hook(event, callback) {
   if (Array.isArray(event)) {
-    event.forEach(e => this.eventManager.on(e, callback));
+    event.forEach((e) => this.eventManager.on(e, callback));
   } else {
     this.eventManager.on(event, callback);
   }
@@ -67,7 +74,8 @@ function hook(event, callback) {
  * @throws {Error} If file name contains dots.
  */
 function create(...args) {
-  let [name = generateRandomId(this.schemaOptions?.idLength), object] = parseOptionalParams(args, 2);
+  let [name = generateRandomId(this.schemaOptions?.idLength), object] =
+    parseOptionalParams(args, 2);
   if (name.includes('.')) throw new Error('File name should not contain dots.');
 
   object = this.eventManager.emit('pre-create', object) || object;
@@ -102,7 +110,8 @@ function read(value, options = { omit: this.schemaOptions.omit }) {
   const result = this._get(value);
 
   let resultData = null;
-  if (result.valueType !== ValueType.DIRECTORY) resultData = omit(this._populateGet(value), options.omit);
+  if (result.valueType !== ValueType.DIRECTORY)
+    resultData = omit(this._populateGet(value), options.omit);
 
   this.eventManager.emit('post-read', resultData);
 
@@ -129,7 +138,9 @@ function find(query, options = {}) {
 
     let isMatch = false;
     if (typeof query === 'object') {
-      isMatch = Object.keys(query).every(key => fileData?.[key] === query[key]);
+      isMatch = Object.keys(query).every(
+        (key) => fileData?.[key] === query[key]
+      );
     } else if (typeof query === 'function') {
       // NOTE: so we don't need optional chaining (user?.age)
       try {
@@ -164,7 +175,9 @@ function update(...args) {
   let [key, value] = parseOptionalParams(args, 2);
   if (!key) throw new Error('File name is required');
 
-  if (Object.keys(value).some(v => this.schemaOptions.immutable.includes(v))) {
+  if (
+    Object.keys(value).some((v) => this.schemaOptions.immutable.includes(v))
+  ) {
     // silent fail
     return null;
   }
@@ -209,7 +222,7 @@ function rename(oldName, newName) {
  */
 function destroy(target) {
   const document = this._get(target);
-
+  console.log(document, target, this.eventManager);
   this.eventManager.emit('pre-destroy', target);
   document.remove();
   this.eventManager.emit('post-destroy', document.data);
