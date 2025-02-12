@@ -91,7 +91,7 @@ function create(...args) {
 
   this._createFile(name, object);
   object = this._populateGet(name);
-  object = this._returnFormatter(name, object);
+  object = this._returnFormatter({ id: name, document: object, omit: [] });
 
   this.eventManager.emit('post-create', object);
 
@@ -109,10 +109,9 @@ function read(value, options = { omit: this.schemaOptions.omit }) {
 
   const result = this._get(value);
 
-  let resultData = null;
-  if (result.valueType !== ValueType.DIRECTORY) resultData = omit(this._populateGet(value), options.omit);
+  if (result.valueType == ValueType.DIRECTORY) return null;
 
-  resultData = this._returnFormatter(resultData);
+  let resultData = this._returnFormatter({ id: value, document: this._populateGet(value), omit: options.omit });
 
   this.eventManager.emit('post-read', resultData);
 
@@ -126,7 +125,6 @@ function read(value, options = { omit: this.schemaOptions.omit }) {
  * @returns {Object|[string, string]} The found document(s).
  */
 function find(query, options = {}) {
-  const { first = false, omit: omitOption = this.schemaOptions.omit } = options;
   this.eventManager.emit('pre-find', query);
 
   this._dirNavigator();
@@ -148,9 +146,9 @@ function find(query, options = {}) {
     }
 
     if (isMatch) {
-      result.push(this._returnFormatter(fileName, omit(fileData, omitOption)));
+      result.push(this._returnFormatter({ id: fileName, document: fileData, omit: options?.omit }));
 
-      if (first) {
+      if (options?.first) {
         result = result[0];
         // NOTE: consistent with create method
         break;
@@ -159,7 +157,7 @@ function find(query, options = {}) {
   }
 
   // supporting 2 formatting types requires this :/
-  if (Array.isArray(result) && !this.schemaOptions?.inlineId && !first) {
+  if (Array.isArray(result) && !this.schemaOptions?.inlineId && !options?.first) {
     result = Object.fromEntries(result);
   }
 
@@ -177,8 +175,7 @@ function find(query, options = {}) {
  * @throws {Error} If file name is missing.
  * @returns {Object|null} The updated document, or null if update fails.
  */
-function update(...args) {
-  let [key, value] = parseOptionalParams(args, 2);
+function update(key, value, options) {
   if (!key) throw new Error('File name is required');
 
   if (Object.keys(value).some(v => this.schemaOptions.immutable.includes(v))) {
@@ -200,7 +197,7 @@ function update(...args) {
   newValue = this._validateAndTransform(newValue);
   target._set(newValue);
 
-  newValue = this._returnFormatter(newValue);
+  newValue = this._returnFormatter({ id: key, document: newValue, omit: options?.omit });
 
   this.eventManager.emit('post-update', newValue);
 

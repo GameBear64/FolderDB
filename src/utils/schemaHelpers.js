@@ -1,4 +1,4 @@
-import { pick, transformCase, parseOptionalParams } from './utilities.js';
+import { pick, omit as omitFn, transformCase, parseOptionalParams } from './utilities.js';
 
 function validateAndTransform(object) {
   if (!this.blueprint) throw new Error('Cant use validateBlueprint() outside of schema');
@@ -106,13 +106,11 @@ function populateGet(name) {
   return object.data;
 }
 
-function returnFormatter(...args) {
-  let [id, document] = parseOptionalParams(args, 2);
+function returnFormatter({ id, document, omit }) {
+  document = omitFn(document, omit || this.schemaOptions.omit);
 
   if (!id) return document;
-
   if (!this.schemaOptions?.inlineId) return [id, document];
-
   return { _id: id, ...document };
 }
 

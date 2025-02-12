@@ -208,7 +208,7 @@ describe('[CREATE - BPs]', () => {
 
 describe('[READ]', () => {
   test('Reading an existing document and omitted fields', () => {
-    const result = users.read('TestUser');
+    const [, result] = users.read('TestUser');
     expect(result.name).toBe('John Doe');
     expect(result).not.toHaveProperty('password');
 
@@ -222,7 +222,7 @@ describe('[READ]', () => {
       email: 'valid@example.com',
       items: ['products.0', 'products.1', 'products.2'],
     });
-    const result = populateUser.read('populatedUser');
+    const [, result] = populateUser.read('populatedUser');
     const data = JSON.parse(fs.readFileSync('./test-db/products.json', 'UTF-8'));
 
     expect(result.items).toMatchObject(data.slice(0, 3));
@@ -244,12 +244,14 @@ describe('[READ]', () => {
 
     expect(callback).toHaveBeenCalledTimes(1);
     expect(callback).toHaveBeenCalledWith(
-      expect.objectContaining({
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        age: 21,
-        bio: 'Cool guy alert!',
-      })
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: 'John Doe',
+          email: 'john.doe@example.com',
+          age: 21,
+          bio: 'Cool guy alert!',
+        }),
+      ])
     );
   });
 
@@ -325,7 +327,7 @@ describe('[FIND]', () => {
 
 describe('[UPDATE]', () => {
   test('Updating an existing document', () => {
-    const result = users.update('TestUser', { password: 'new-password-hash' });
+    const [, result] = users.update('TestUser', { password: 'new-password-hash' }, { omit: [] });
 
     expect(result.password).toBe('new-password-hash');
     expect(result).toHaveProperty('updated_at');
@@ -342,10 +344,10 @@ describe('[UPDATE]', () => {
   });
 
   test('Updating a document with a multi type value', () => {
-    let result = users.update('TestUser', { phone: 123456789 });
+    let [, result] = users.update('TestUser', { phone: 123456789 }, { omit: [] });
     expect(typeof result.phone).toBe('number');
 
-    result = users.update('TestUser', { phone: '+359899696969' });
+    [, result] = users.update('TestUser', { phone: '+359899696969' }, { omit: [] });
     expect(typeof result.phone).toBe('string');
 
     expect(() => users.update('TestUser', { phone: true })).toThrow();
@@ -363,17 +365,19 @@ describe('[UPDATE]', () => {
   test('Updating document and and after hook', () => {
     const callback = mock();
     users.hook('post-update', callback);
-    users.update('TestUser', { password: 'newer-er-password-hash' });
+    users.update('TestUser', { password: 'newer-er-password-hash' }, { omit: [] });
 
     expect(callback).toHaveBeenCalledTimes(1);
     expect(callback).toHaveBeenCalledWith(
-      expect.objectContaining({
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        age: 21,
-        password: 'newer-er-password-hash',
-        bio: 'Cool guy alert!',
-      })
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: 'John Doe',
+          email: 'john.doe@example.com',
+          age: 21,
+          password: 'newer-er-password-hash',
+          bio: 'Cool guy alert!',
+        }),
+      ])
     );
   });
 });
