@@ -129,6 +129,7 @@ function metadata() {
   const stats = fs.statSync(filePath);
 
   return {
+    path: filePath,
     type: stats.isFile() ? 'file' : stats.isDirectory() ? 'directory' : 'other',
     size: stats.size,
     createdAt: stats.birthtime,
@@ -136,4 +137,5 @@ function metadata() {
   };
 }
 
+// TODO: update docs with fileExists and metadata
 export { get, getTree, back, fileExists, metadata };

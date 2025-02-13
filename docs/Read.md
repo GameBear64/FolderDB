@@ -109,3 +109,38 @@ db.back();
 console.log(db.data);
 //returns {"age": 19, "hobby": "Video games"}
 ```
+
+---
+### .fileExists(value)
+Check if file exists
+
+| Parameter  | Type   |
+| ---------- | ------ |
+| value      | string |
+
+**Example:**
+```js
+const db = DB.get("user.comments").fileExists('comment_id')
+//returns true or false
+```
+
+---
+### .metadata(value)
+Check file metadata (path, type, size, timestamps)
+
+| Parameter  | Type   |
+| ---------- | ------ |
+| value      | string |
+
+**Example:**
+```js
+const db = DB.get("user.comments").metadata('comment_id')
+//returns t
+{
+  path: '~/project/db/user/comments/comment_id',
+  type: 'file',
+  size: '593',
+  createdAt: 'Mon, 10 Feb 2025 23:24:11 GMT',
+  modifiedAt: 'Tue, 11 Feb 2025 09:43:57 GMT',
+}
+```

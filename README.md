@@ -48,6 +48,8 @@ const db = new FolderDB({ dbPath: './db' });
 
 # Documentation
 
+- [**Schemas**](./docs/Schemas.md)
+---
 - [**Class**](./docs/Class.md)
 - [**Read**](./docs/Read.md)
 - [**Write**](./docs/Write.md)

@@ -107,6 +107,7 @@ function populateGet(name) {
 }
 
 function returnFormatter({ id, document, omit }) {
+  // todo: add pick as well
   document = omitFn(document, omit || this.schemaOptions.omit);
 
   if (!id) return document;
