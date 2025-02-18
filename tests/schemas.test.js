@@ -338,9 +338,15 @@ describe('[UPDATE]', () => {
   });
 
   test('Updating a document with an immutable field', () => {
-    const result = users.update('TestUser', { created_at: 1234567891234 });
+    const [, result] = users.update('TestUser', { age: 23, created_at: 1234567891234 });
 
-    expect(result).toBe(null);
+    expect(result).toMatchObject({
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      age: 23,
+    });
+
+    expect(result.created_at).not.toBe(1234567891234);
   });
 
   test('Updating a document with a multi type value', () => {
@@ -362,7 +368,7 @@ describe('[UPDATE]', () => {
     expect(callback).toHaveBeenCalledWith({ password: 'newer-password-hash' });
   });
 
-  test('Updating document and and after hook', () => {
+  test('Updating document and after hook', () => {
     const callback = mock();
     users.hook('post-update', callback);
     users.update('TestUser', { password: 'newer-er-password-hash' }, { omit: [] });
@@ -373,7 +379,7 @@ describe('[UPDATE]', () => {
         expect.objectContaining({
           name: 'John Doe',
           email: 'john.doe@example.com',
-          age: 21,
+          age: 23,
           password: 'newer-er-password-hash',
           bio: 'Cool guy alert!',
         }),

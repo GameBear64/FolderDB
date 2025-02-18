@@ -104,14 +104,14 @@ function create(...args) {
  * @param {Object} [options={ omit: this.schemaOptions.omit }] - Options for reading.
  * @returns {Object} The read document, with omitted fields.
  */
-function read(value, options = { omit: this.schemaOptions.omit }) {
+function read(value, options) {
   this.eventManager.emit('pre-read', value);
 
   const result = this._get(value);
 
   if (result.valueType == ValueType.DIRECTORY) return null;
 
-  let resultData = this._returnFormatter({ id: value, document: this._populateGet(value), omit: options.omit });
+  let resultData = this._returnFormatter({ id: value, document: this._populateGet(value), omit: options?.omit });
 
   this.eventManager.emit('post-read', resultData);
 
@@ -178,19 +178,15 @@ function find(query, options = {}) {
 function update(key, value, options) {
   if (!key) throw new Error('File name is required');
 
-  if (Object.keys(value).some(v => this.schemaOptions.immutable.includes(v))) {
-    // silent fail
-    return null;
-  }
+  // skip immutable
+  value = omit(value, this.schemaOptions.immutable);
 
   value = this.eventManager.emit('pre-update', value) || value;
 
   const target = this._get(key);
   let newValue = { ...target.data, ...value };
 
-  if (this.schemaOptions?.timestamps) {
-    // TODO: allow certain keys to not update timestamp
-    // for example in the blueprint -> silent: true
+  if (this.schemaOptions?.timestamps && !options?.silent) {
     newValue.updated_at = new Date().getTime();
   }
 

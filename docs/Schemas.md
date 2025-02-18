@@ -58,7 +58,7 @@ Blueprints provide the outline for your document. There are a number of options 
 | type       | Type of property (use type classes)                      |         |
 | required   | If property is required or not                           | `false` |
 | default    | Default value in case of absence                         |         |
-| immutable  | Weather this field can be updated                        | `false` |
+| immutable  | Weather this field can be updated                        | [`created_at`, `updated_at`] |
 | omit       | Weather to include filed in returns from reads           |         |
 | populate   | String defining the field's relationship (auto populate) (only in create and read) |
 ---
@@ -184,6 +184,12 @@ Display the contents of a file
 | name         | Name of the file            |             |
 | options.omit | Array with fields to omit   | `[]`        |
 
+Options: 
+
+| Option | Description                | Default |
+| ------ | -------------------------- | ------- |
+| omit   | When returning, omit a key | [defaults](#functional-options)
+
 **Example:**
 ```js
 users.read('GamBar');
@@ -211,6 +217,12 @@ Find document with condition
 | query         | Either a callback or object to search with |             |
 | options.first | When `true` returns only the first find    | `false`     |
 
+Options: 
+
+| Option | Description                | Default |
+| ------ | -------------------------- | ------- |
+| omit   | When returning, omit a key | [defaults](#functional-options)
+
 **Example:**
 ```js
 users.find({ name: 'GamBar' }, { first: true });
@@ -237,6 +249,13 @@ Update single document
 | ----------| ------------------------------- |
 | key       | Name or path to value to update |
 | value     | Partial object to save          |
+
+Options: 
+
+| Option | Description                | Default |
+| ------ | -------------------------- | ------- |
+| omit   | When returning, omit a key | [defaults](#functional-options)
+| silent | Do not update updated_at   | `false` |
 
 **Example:**
 ```js
