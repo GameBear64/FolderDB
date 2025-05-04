@@ -16,7 +16,7 @@ function validateAndTransform(object, nestedRules) {
       if (result != undefined) object[key] = result;
     }
 
-    if (rules.type == Object) this._validateAndTransform(object[key], rules)
+    if (rules.type == Object && object[key]) this._validateAndTransform(object[key], rules);
   }
 
   const timestamps = this.schemaOptions?.timestamps ? ['created_at', 'updated_at'] : [];
