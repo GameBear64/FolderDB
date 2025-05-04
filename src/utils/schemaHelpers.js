@@ -1,10 +1,12 @@
 import { pick, omit as omitFn, transformCase, parseOptionalParams } from './utilities.js';
 
-function validateAndTransform(object) {
+function validateAndTransform(object, nestedRules) {
   if (!this.blueprint) throw new Error('Cant use validateBlueprint() outside of schema');
 
-  for (const key in this.blueprint) {
-    const rules = this.blueprint[key];
+  const blueprint = nestedRules ? nestedRules : this.blueprint
+
+  for (const key in blueprint) {
+    const rules = blueprint[key];
 
     if (object[key]) {
       object[key] = validateBlueprint.bind(this)(object[key], rules, key);
@@ -13,6 +15,8 @@ function validateAndTransform(object) {
       const result = additiveTransform(rules, key);
       if (result != undefined) object[key] = result;
     }
+
+    if (rules.type == Object && object[key]) this._validateAndTransform(object[key], rules);
   }
 
   const timestamps = this.schemaOptions?.timestamps ? ['created_at', 'updated_at'] : [];

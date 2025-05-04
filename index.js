@@ -35,6 +35,30 @@ const userSchema = db.get('users').schema(
       type: Number,
       default: 0,
     },
+    settings: {
+      theme: {
+        type: String,
+        default: 'dark',
+      },
+      language: {
+        type: String,
+        required: true
+      },
+      spaghetti: {
+        meatballs: {
+          type: Array,
+          required: true,
+        },
+        sauce: {
+          type: Boolean,
+          default: true,
+        },
+        type: Object,
+        required: true,
+      },
+      type: Object,
+      required: true
+    }
   },
   { timestamps: true, inlineId: true }
 );
@@ -58,6 +82,14 @@ const contents = userSchema.create('friend2', {
   bookings: 'gghj',
   password: 'secret',
   items: ['products.0', 'products.1', 'products.2'],
+  settings: {
+    // theme: '',
+    language: 'en',
+    spaghetti: {
+      meatballs: [1, 2, 3],
+      sauce: true,
+    }
+  }
 });
 
 userSchema.update('friend2', { password: 'new-password' });
