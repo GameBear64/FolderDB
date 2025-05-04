@@ -16,6 +16,7 @@ const users = db.get('users').schema(
     preferences: { type: String, default: 'none', enum: ['none', 'basic', 'advanced'] },
     status: { type: String, toCase: CaseFormat.UPPER },
     isActive: { type: String, transform: v => v == 'yes' },
+    settings: { type: Object, theme: { type: String, default: 'dark' }, language: { type: String, required: true}}
   },
   { timestamps: true }
 );
@@ -204,6 +205,32 @@ describe('[CREATE - BPs]', () => {
     const [, user] = users.create({ name: 'Transform Test', email: 'transform@example.com', age: 30, isActive: 'yes' });
     expect(user.isActive).toBe(true);
   });
+
+  test('Creating a document with nested property', () => {
+    const [, user] = users.create({
+      name: 'Nested Doc',
+      email: 'default@example.com',
+      settings: {
+        language: 'en'
+    }});
+
+    expect(user.settings).toMatchObject({
+      theme: 'dark',
+      language: 'en'
+    });
+  });
+
+  test('Validating nested property', () => {
+    expect(() => {
+      users.create({
+        name: 'Nested Doc',
+        email: 'default@example.com',
+        settings: {
+          language: 1
+        }
+      });
+    }).toThrow('Schema: language must be of type String.');
+  });
 });
 
 describe('[READ]', () => {
@@ -237,7 +264,7 @@ describe('[READ]', () => {
     expect(callback).toHaveBeenCalledWith('TestUser');
   });
 
-  test('Reading document and and after hook', () => {
+  test('Reading document and after hook', () => {
     const callback = mock();
     users.hook('post-read', callback);
     users.read('TestUser');
@@ -305,7 +332,7 @@ describe('[FIND]', () => {
     expect(callback).toHaveBeenCalledWith({ age: 21 });
   });
 
-  test('Finding document and and after hook', () => {
+  test('Finding document and after hook', () => {
     const callback = mock();
     users.hook('post-find', callback);
     users.find({ age: 21 }, { first: true });
@@ -386,6 +413,34 @@ describe('[UPDATE]', () => {
       ])
     );
   });
+
+  test('Updating a document with nested values', () => {
+    const [, result] = users.update('TestUser', { settings: {language: 'bg'} });
+
+    expect(result).toMatchObject({
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      age: 23,
+      settings: {
+        language: 'bg'
+      }
+    });
+  });
+
+  test('Updating a document with nested nested values', () => {
+    const [, result] = users.update('TestUser', { settings: { language: 'en', spaghetti: {meatballs: [1,2,3]} } });
+
+    expect(result).toMatchObject({
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      age: 23,
+      settings: {
+        spaghetti: {
+          meatballs: [1, 2, 3]
+        }
+      }
+    });
+  });
 });
 
 describe('[RENAME]', () => {
@@ -451,7 +506,7 @@ describe('[DESTROY]', () => {
     expect(callback).toHaveBeenCalledWith('final-user-before');
   });
 
-  test('Destroying document and and after hook', () => {
+  test('Destroying document and after hook', () => {
     users.create('final-user-after', { name: 'John Doe', email: 'john.doe@example.com', age: 30 });
 
     const callback = mock();
